@@ -1,0 +1,11 @@
+---
+
+serfnode:
+  image: serfnode
+  environment:
+    ROLE:
+    CONTACT:
+    ADVERTISE:
+    RPC_PORT:
+    NODE:
+    IP:

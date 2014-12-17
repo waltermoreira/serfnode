@@ -51,8 +51,11 @@ def my_info():
 
 def actor_info():
     try:
-        with open('/actor_info') as f:
-            return f.read()
-    except IOError:
+        actor_files = os.listdir('/actors')
+    except OSError:
         return json.dumps({})
+    info = {}
+    for actor_file in actor_files:
+        info[actor_file] = json.load(open('/actors/{}'.format(actor_file)))
+    return json.dumps(info)
 

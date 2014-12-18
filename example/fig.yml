@@ -1,0 +1,11 @@
+---
+
+example:
+  image: serfnode_example
+  environment:
+    ROLE: example
+    CONTACT:
+    ADVERTISE:
+    RPC_PORT:
+    NODE:
+    IP:

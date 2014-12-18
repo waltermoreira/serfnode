@@ -13,5 +13,6 @@ except ImportError:
 
 if __name__ == '__main__':
     handler = SerfHandlerProxy()
-    handler.register(os.environ.get('ROLE', 'no_role'), MyHandler())
+    role = os.environ.get('ROLE') or 'no_role'
+    handler.register(role, MyHandler())
     handler.run()

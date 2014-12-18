@@ -21,7 +21,7 @@ Quickstart
   This will generate an image with name ``serfnode``.
 
 - Go to the ``example`` directory to see an example of use.  See
-  Section :ref:`structure` to read about its components.
+  `Structure`_ to read about its components.
 
   Build it and test it with:
 

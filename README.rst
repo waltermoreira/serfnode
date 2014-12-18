@@ -65,3 +65,16 @@ Actors
 Actors can be defined in the file ``handler/actors.py`` (see example
 in the ``example/handler`` directory), inheriting from
 ``ProcessActor`` or ``ThreadedActor``.
+
+Schedule actors to start at startup time by adding them to
+supervisor.  The ``ExampleActor`` in ``example/handler/actors.py``
+gets scheduled with the following file added to
+``/etc/supervisor/conf.d/``:
+
+.. code-block::
+
+   # file: example.conf
+   [program:example]
+   command=/handler/start_actor.py ExampleActor
+   autostart=true
+   autorestart=true

@@ -3,7 +3,7 @@
 example:
   image: serfnode_example
   environment:
-    ROLE: example
+    ROLE:
     CONTACT:
     ADVERTISE:
     RPC_PORT:

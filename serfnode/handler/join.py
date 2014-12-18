@@ -15,6 +15,7 @@ import subprocess
 import uuid
 
 from utils import save_info
+from mischief.actors.pipe import get_local_ip
 
 
 def find_port(start=1234):
@@ -48,7 +49,7 @@ def main():
     if contact:
         cmd.extend(['-join', contact])
 
-    advertise = os.environ.get('ADVERTISE')
+    advertise = os.environ.get('ADVERTISE') or get_local_ip('8.8.8.8')
     if advertise:
         cmd.extend(['-advertise', advertise])
         cmd.extend(['-tag', 'adv={}'.format(advertise)])

@@ -40,7 +40,7 @@ def _find(lst, x):
 
 
 def main():
-    role = os.environ.get('ROLE', 'no_role')
+    role = os.environ.get('ROLE') or 'no_role'
     cmd = ('serf agent -event-handler=/handler/handler.py '
            '-log-level=debug -tag role={role}'
            .format(**locals()).split())

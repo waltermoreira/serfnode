@@ -29,14 +29,14 @@ class BaseHandler(SerfHandler):
     @truncated_stdout
     @with_payload
     def where(self, role=None):
-        my_role = os.environ.get('ROLE', 'no_role')
+        my_role = os.environ.get('ROLE') or 'no_role'
         if my_role == role:
             print(my_info())
 
     @truncated_stdout
     @with_payload
     def where_actor(self, role=None):
-        my_role = os.environ.get('ROLE', 'no_role')
+        my_role = os.environ.get('ROLE') or 'no_role'
         if my_role == role:
             print(actor_info())
 

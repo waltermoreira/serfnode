@@ -68,7 +68,7 @@ def member_info(lines):
 def save_info(node, advertise, bind_port, rpc_port):
     info = {
         'node': node,
-        'advertise': advertise,
+        'ip': advertise,
         'bind_port': bind_port,
         'rpc_port': rpc_port
     }

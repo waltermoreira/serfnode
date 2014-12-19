@@ -4,8 +4,9 @@ serfnode:
   image: serfnode
   environment:
     ROLE:
-    CONTACT:
-    ADVERTISE:
-    RPC_PORT:
-    NODE:
+    PEER:
     IP:
+    SERF_PORT:
+    RPC_PORT:
+    NODE_NAME:
+

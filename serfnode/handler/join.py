@@ -45,36 +45,26 @@ def main():
            '-log-level=debug -tag role={role}'
            .format(**locals()).split())
 
-    contact = os.environ.get('CONTACT')
+    contact = os.environ.get('PEER')
     if contact:
         cmd.extend(['-join', contact])
 
-    advertise = os.environ.get('ADVERTISE') or get_local_ip('8.8.8.8')
-    if advertise:
-        cmd.extend(['-advertise', advertise])
-        cmd.extend(['-tag', 'adv={}'.format(advertise)])
+    ip = os.environ.get('IP') or get_local_ip('8.8.8.8')
+    bind_port = os.environ.get('SERF_PORT') or find_port(start=7946)
 
-    bind_port = find_port(start=7946)
-    try:
-        _, bind_port = advertise.split(':')
-    except (ValueError, AttributeError):
-        pass
+    cmd.extend(['-advertise', '{}:{}'.format(ip, bind_port)])
+    cmd.extend(['-tag', 'ip={}'.format(ip),
+                '-tag', 'serf_port={}'.format(bind_port)])
     cmd.extend(['-bind', '0.0.0.0:{}'.format(bind_port)])
-    cmd.extend(['-tag', 'bind={}'.format(bind_port)])
 
-    node = os.environ.get('NODE') or uuid.uuid4().hex
+    node = os.environ.get('NODE_NAME') or uuid.uuid4().hex
     cmd.extend(['-node', node])
 
     rpc_port = os.environ.get('RPC_PORT') or find_port(start=7373)
     cmd.extend(['-rpc-addr', '127.0.0.1:{}'.format(rpc_port)])
     cmd.extend(['-tag', 'rpc={}'.format(rpc_port)])
 
-    save_info(node, advertise, bind_port, rpc_port)
-
-    print('node name:   {}'.format(node))
-    print('advertising: {}'.format(advertise))
-    print('bound to:    0.0.0.0:{}'.format(bind_port))
-    print('rpc port:    {}'.format(rpc_port))
+    save_info(node, ip, bind_port, rpc_port)
 
     subprocess.check_call(cmd)
 

@@ -13,6 +13,7 @@ import bisect
 import os
 import subprocess
 import uuid
+import time
 
 from utils import save_info
 from mischief.actors.pipe import get_local_ip
@@ -63,6 +64,7 @@ def main():
     rpc_port = os.environ.get('RPC_PORT') or find_port(start=7373)
     cmd.extend(['-rpc-addr', '127.0.0.1:{}'.format(rpc_port)])
     cmd.extend(['-tag', 'rpc={}'.format(rpc_port)])
+    cmd.extend(['-tag', 'timestamp={}'.format(time.time())])
 
     save_info(node, ip, bind_port, rpc_port)
 

@@ -106,17 +106,17 @@ def serf_aware_spawn(actor, name, **kwargs):
 
 
 def read_etc_hosts():
-    etc = [line.strip().split() for line in open('/etc/hosts').readlines()]
-    return {line[0]: line[1:] for line in etc}
-
-
-def update_etc_hosts(etc, more_hosts):
-    for ip in more_hosts:
-        etc.setdefault(ip, []).extend(more_hosts[ip])
+    etc = [line.strip().split()
+           for line in open('/etc/hosts').readlines()
+           if not line.startswith('#')]
+    return {host: line[0] for line in etc for host in line[1:]}
 
 
 def write_etc_hosts(etc):
     shutil.copyfile('/etc/hosts', '/etc/hosts.orig')
+    ip_hosts = {}
+    for host, ip in etc.items():
+        ip_hosts.setdefault(ip, []).append(host)
     with open('/etc/hosts', 'w') as f:
         f.writelines(
-            ' '.join([ip] + hosts)+'\n' for ip, hosts in etc.items())
+            ' '.join([ip] + hosts)+'\n' for ip, hosts in ip_hosts.items())

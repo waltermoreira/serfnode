@@ -15,5 +15,5 @@ class EtcWriter(ProcessActor):
         etc = utils.read_etc_hosts()
         new = serf.serf_all_hosts()
         recent = serf.serf_recent_hosts(new)
-        utils.update_etc_hosts(etc, recent)
+        etc.update(recent)
         utils.write_etc_hosts(etc)

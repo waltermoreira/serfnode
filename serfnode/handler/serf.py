@@ -49,10 +49,11 @@ def serf_all_hosts():
     members = serf('members')['members']
     hosts = {}
     for member in members:
-        ip = member['tags']['ip']
-        role = member['tags']['role']
-        timestamp = member['tags']['timestamp']
-        hosts.setdefault(role, []).append((ip, timestamp))
+        if member['status'] == 'alive':
+            ip = member['tags']['ip']
+            role = member['tags']['role']
+            timestamp = member['tags']['timestamp']
+            hosts.setdefault(role, []).append((ip, timestamp))
     return hosts
 
 
@@ -60,5 +61,5 @@ def serf_recent_hosts(all_hosts):
     hosts = {}
     for role, ips_n_time in all_hosts.items():
         ip = max(ips_n_time, key=lambda it: it[1])[0]
-        hosts[ip] = [role]
+        hosts[role] = ip
     return hosts

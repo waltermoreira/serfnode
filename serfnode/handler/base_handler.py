@@ -26,7 +26,7 @@ class BaseHandler(SerfHandler):
         self.setup()
 
     def setup(self):
-        pass
+        self.update()
 
     @truncated_stdout
     @with_payload

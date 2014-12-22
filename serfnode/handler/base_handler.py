@@ -3,6 +3,7 @@ import os
 import socket
 import fcntl
 import struct
+import time
 
 from serf_master import SerfHandler
 from utils import with_payload, truncated_stdout, with_member_info
@@ -26,6 +27,15 @@ class BaseHandler(SerfHandler):
         self.setup()
 
     def setup(self):
+        # Wait for EtcWriter actor to start
+        while True:
+            try:
+                with self.get_writer_ref() as ref:
+                    if ref.is_alive():
+                        break
+            except IOError:
+                pass
+            time.sleep(0.5)
         self.update()
 
     @truncated_stdout

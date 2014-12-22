@@ -59,7 +59,7 @@ class BaseHandler(SerfHandler):
         self.update()
 
     @with_member_info
-    def member_fail(self, members):
+    def member_failed(self, members):
         self.update()
 
     @with_member_info

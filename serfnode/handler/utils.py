@@ -7,6 +7,7 @@ import sys
 import time
 import traceback
 import cStringIO
+import shutil
 
 import mischief.actors.pipe as p
 import mischief.actors.actor as a
@@ -103,3 +104,19 @@ def serf_aware_spawn(actor, name, **kwargs):
         json.dump({'name': identifier, 'ip': ip, 'port': port}, f)
     return proc
 
+
+def read_etc_hosts():
+    etc = [line.strip().split() for line in open('/etc/hosts').readlines()]
+    return {line[0]: line[1:] for line in etc}
+
+
+def update_etc_hosts(etc, more_hosts):
+    for ip in more_hosts:
+        etc.setdefault(ip, []).extend(more_hosts[ip])
+
+
+def write_etc_hosts(etc):
+    shutil.copyfile('/etc/hosts', '/etc/hosts.orig')
+    with open('/etc/hosts', 'w') as f:
+        f.writelines(
+            ' '.join([ip] + hosts)+'\n' for ip, hosts in etc.items())

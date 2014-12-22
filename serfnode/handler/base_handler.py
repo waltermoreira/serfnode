@@ -5,7 +5,9 @@ import fcntl
 import struct
 
 from serf_master import SerfHandler
-from utils import with_payload, truncated_stdout
+from utils import with_payload, truncated_stdout, with_member_info
+from info import NODE_INFO
+import mischief.actors.actor as actor
 
 
 def get_ip_address(ifname):
@@ -31,7 +33,7 @@ class BaseHandler(SerfHandler):
     def where(self, role=None):
         my_role = os.environ.get('ROLE') or 'no_role'
         if my_role == role:
-            print(my_info())
+            print(NODE_INFO)
 
     @truncated_stdout
     @with_payload
@@ -40,14 +42,30 @@ class BaseHandler(SerfHandler):
         if my_role == role:
             print(actor_info())
 
+    def get_writer_ref(self):
+        actor_info = json.load(open('/actors/EtcWriter'))
+        return actor.ActorRef(
+            (actor_info['name'], actor_info['ip'], actor_info['port']))
 
-def my_info():
-    ip = os.environ.get('ADVERTISE') or get_ip_address('eth0')
-    return json.dumps({'ip': ip,
-                       'bind': os.environ['SERF_TAG_BIND'],
-                       'advertise': os.environ.get('SERF_TAG_ADV'),
-                       'rpc': os.environ['SERF_TAG_RPC']})
+    def update(self):
+        try:
+            with self.get_writer_ref() as ref:
+                ref.update_etc()
+        except IOError:
+            pass
 
+    @with_member_info
+    def member_join(self, members):
+        self.update()
+
+    @with_member_info
+    def member_fail(self, members):
+        self.update()
+
+    @with_member_info
+    def member_leave(self, members):
+        self.update()
+        
 
 def actor_info():
     try:
@@ -58,4 +76,3 @@ def actor_info():
     for actor_file in actor_files:
         info[actor_file] = json.load(open('/actors/{}'.format(actor_file)))
     return json.dumps(info)
-

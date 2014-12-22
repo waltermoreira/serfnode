@@ -4,8 +4,8 @@ example:
   image: serfnode_example
   environment:
     ROLE:
-    CONTACT:
-    ADVERTISE:
-    RPC_PORT:
-    NODE:
+    PEER:
     IP:
+    SERF_PORT:
+    RPC_PORT:
+    NODE_NAME:

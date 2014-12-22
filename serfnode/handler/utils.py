@@ -92,7 +92,7 @@ def load_info():
 def serf_aware_spawn(actor, name, **kwargs):
     """Spawn actor and save address info in ``/actor_info``. """
 
-    ip = os.environ['IP'] or p.get_local_ip('8.8.8.8')
+    ip = os.environ.get('IP') or p.get_local_ip('8.8.8.8')
     kwargs['ip'] = ip
     proc = a.spawn(actor, **kwargs)
     try:

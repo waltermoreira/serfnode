@@ -66,6 +66,9 @@ def main():
     cmd.extend(['-tag', 'rpc={}'.format(rpc_port)])
     cmd.extend(['-tag', 'timestamp={}'.format(time.time())])
 
+    service = os.environ.get('SERVICE_IP') or ip
+    cmd.extend(['-tag', 'service={}'.format(service)])
+
     save_info(node, ip, bind_port, rpc_port)
 
     subprocess.check_call(cmd)

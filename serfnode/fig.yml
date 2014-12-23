@@ -6,6 +6,7 @@ serfnode:
     ROLE:
     PEER:
     IP:
+    SERVICE_IP:
     SERF_PORT:
     RPC_PORT:
     NODE_NAME:

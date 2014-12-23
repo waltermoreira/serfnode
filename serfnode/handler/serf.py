@@ -50,7 +50,7 @@ def serf_all_hosts():
     hosts = {}
     for member in members:
         if member['status'] == 'alive':
-            ip = member['tags']['ip']
+            ip = member['tags']['service']
             role = member['tags']['role']
             timestamp = member['tags']['timestamp']
             hosts.setdefault(role, []).append((ip, timestamp))

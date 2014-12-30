@@ -14,6 +14,8 @@ serfnode:
     # but it can differ if the node is acting as a proxy (ip)
     SERVICE_IP:
     # port of the ip this node provides (int)
+    SERVICE_PORT:
+    # port where the serf agent is listening (int)
     SERF_PORT:
     # port where the serf agent accepts commands (int)
     RPC_PORT:

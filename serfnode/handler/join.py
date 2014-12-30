@@ -69,6 +69,9 @@ def main():
     service = os.environ.get('SERVICE_IP') or ip
     cmd.extend(['-tag', 'service={}'.format(service)])
 
+    service_port = os.environ.get('SERVICE_PORT') or 0
+    cmd.extend(['-tag', 'service_port={}'.format(service_port)])
+
     save_info(node, ip, bind_port, rpc_port)
 
     subprocess.check_call(cmd)

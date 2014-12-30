@@ -3,11 +3,19 @@
 serfnode:
   image: serfnode
   environment:
+    # service the node provides (str)
     ROLE:
+    # ip of a peer in the cluster (ip)
     PEER:
+    # own advertised ip. Defaults to the ip of the interface that can
+    # access the internet (ip)
     IP:
+    # ip of the service this node provides. Defaults to its own ip,
+    # but it can differ if the node is acting as a proxy (ip)
     SERVICE_IP:
+    # port of the ip this node provides (int)
     SERF_PORT:
+    # port where the serf agent accepts commands (int)
     RPC_PORT:
+    # name of the node. Defaults to a random unique id (str)
     NODE_NAME:
-

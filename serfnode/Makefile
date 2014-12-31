@@ -1,6 +1,6 @@
 .PHONY: clean
 
-build: Dockerfile handler/* serfnode.conf
+build: Dockerfile handler/* programs/* serfnode.conf
 	docker build -t serfnode .
 	touch build
 

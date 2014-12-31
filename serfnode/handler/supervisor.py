@@ -18,7 +18,8 @@ def supervisor_install(block, **kwargs):
     template = env.get_template(block)
     kwargs.update({
         'DOCKER': docker_utils.DOCKER,
-        'DOCKER_SOCKET': docker_utils.DOCKER_SOCKET})
+        'DOCKER_SOCKET': docker_utils.DOCKER_SOCKET,
+        'DOCKER_RUN': docker_utils.DOCKER_RUN})
     conf = template.render(kwargs)
     with open(os.path.join(
             '/etc/supervisor/conf.d', conf_filename), 'w') as f:

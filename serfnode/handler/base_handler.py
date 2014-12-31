@@ -9,6 +9,8 @@ from serf_master import SerfHandler
 from utils import with_payload, truncated_stdout, with_member_info
 from info import NODE_INFO
 import mischief.actors.actor as actor
+import supervisor
+import docker_utils
 
 
 def get_ip_address(ifname):
@@ -27,6 +29,14 @@ class BaseHandler(SerfHandler):
         self.setup()
 
     def setup(self):
+        self.etc_writer()
+        self.docker_run()
+
+    def docker_run(self):
+        if docker_utils.DOCKER_RUN:
+            supervisor.start('docker_run.conf', target='docker_run')
+
+    def etc_writer(self):
         # Wait for EtcWriter actor to start
         while True:
             try:
@@ -36,6 +46,7 @@ class BaseHandler(SerfHandler):
             except IOError:
                 pass
             time.sleep(0.5)
+        # ... and do the writing
         self.update()
 
     @truncated_stdout

@@ -41,3 +41,4 @@ def fig(*args):
 DOCKER = path(os.environ.get('DOCKER_BINARY', '/usr/bin/docker'))
 DOCKER_SOCKET = 'unix://{}'.format(
     path(os.environ.get('DOCKER_SOCKET', '/run/docker.sock')))
+DOCKER_RUN = os.environ.get('DOCKER_RUN')

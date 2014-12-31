@@ -2,6 +2,8 @@
 
 serfnode:
   image: serfnode
+  volumes:
+    - /:/host
   environment:
     # service the node provides (str)
     ROLE:
@@ -21,3 +23,6 @@ serfnode:
     RPC_PORT:
     # name of the node. Defaults to a random unique id (str)
     NODE_NAME:
+    # optional docker run statement to launch through supervisor on startup (str)
+    # It should make the statement "docker run $DOCKER_RUN" a valid statement
+    DOCKER_RUN:

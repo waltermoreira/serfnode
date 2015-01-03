@@ -1,0 +1,29 @@
+---
+
+# Uncomment this variable and set a domain or ip of a registry to use
+# for exchanging images.  Use your username at the hub.docker.com to use the Docker hub.
+#
+# remote_registry: localhost
+
+
+# Define the exposed ports of the app.  These ports get mapped to
+# random ports in the host, which can be queried by sending a "where"
+# message to the serfnode.  Use 'mapped_ports' for a deterministic
+# mapping.
+#
+exposed_ports:
+  - 1234
+  - 7000
+  - 8000
+mapped_ports:
+  - "8000:8000"
+
+
+# Name of the container for the serfnode.
+#
+serfnode_name: test
+
+
+# Role of the serfnode (to be queried via serf events).
+#
+role: my_role

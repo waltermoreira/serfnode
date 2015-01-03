@@ -1,0 +1,16 @@
+---
+
+- include: push.yml
+  when: remote_registry is defined
+
+- name: Start serfnode
+  docker:
+    image: serfnode
+    name: "{{ serfnode_name }}"
+    volumes:
+      - /:/host
+    expose: "{{ exposed_ports }}"
+    ports: "{{ exposed_ports|union(mapped_ports)|union([7946]) }}"
+    state: running
+    env:
+      ROLE: "{{ my_role }}"

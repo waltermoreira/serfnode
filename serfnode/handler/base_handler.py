@@ -11,6 +11,8 @@ from info import NODE_INFO
 import mischief.actors.actor as actor
 import supervisor
 import docker_utils
+import utils
+import serf
 
 
 def get_ip_address(ifname):
@@ -29,25 +31,12 @@ class BaseHandler(SerfHandler):
         self.setup()
 
     def setup(self):
-        self.etc_writer()
+        self.update()
         self.docker_run()
 
     def docker_run(self):
         if docker_utils.DOCKER_RUN:
             supervisor.start('docker_run.conf', target='docker_run')
-
-    def etc_writer(self):
-        # Wait for EtcWriter actor to start
-        while True:
-            try:
-                with self.get_writer_ref() as ref:
-                    if ref.is_alive():
-                        break
-            except IOError:
-                pass
-            time.sleep(0.5)
-        # ... and do the writing
-        self.update()
 
     @truncated_stdout
     @with_payload
@@ -69,11 +58,11 @@ class BaseHandler(SerfHandler):
             (actor_info['name'], actor_info['ip'], actor_info['port']))
 
     def update(self):
-        try:
-            with self.get_writer_ref() as ref:
-                ref.update_etc()
-        except IOError:
-            pass
+        etc = utils.read_etc_hosts()
+        new = serf.serf_all_hosts()
+        recent = serf.serf_recent_hosts(new)
+        etc.update(recent)
+        utils.write_etc_hosts(etc)
 
     @with_member_info
     def member_join(self, members):

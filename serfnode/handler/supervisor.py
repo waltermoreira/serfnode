@@ -2,6 +2,7 @@ import os
 import subprocess
 
 import docker_utils
+import docker
 import jinja2
 env = jinja2.Environment(loader=jinja2.FileSystemLoader('/programs'))
 
@@ -42,5 +43,12 @@ def start(block, **kwargs):
     supervisor_exec('start', '{}:*'.format(kwargs['target']))
 
 
+def start_docker(target, name, cmdline):
+    start('app.conf', target=target,
+          ARGS='--cidfile=/app --name={} {}'.format(name, cmdline),
+          NAME=name)
+
+
 def stop(block):
     supervisor_exec('stop', '{}:*'.format(block))
+

@@ -1,14 +1,11 @@
-import json
 import os
 import socket
 import fcntl
 import struct
-import time
 
 from serf_master import SerfHandler
 from utils import with_payload, truncated_stdout, with_member_info
 from info import NODE_INFO
-import mischief.actors.actor as actor
 import supervisor
 import docker_utils
 import utils
@@ -45,18 +42,6 @@ class BaseHandler(SerfHandler):
         if my_role == role:
             print(NODE_INFO)
 
-    @truncated_stdout
-    @with_payload
-    def where_actor(self, role=None):
-        my_role = os.environ.get('ROLE') or 'no_role'
-        if my_role == role:
-            print(actor_info())
-
-    def get_writer_ref(self):
-        actor_info = json.load(open('/actors/EtcWriter'))
-        return actor.ActorRef(
-            (actor_info['name'], actor_info['ip'], actor_info['port']))
-
     def update(self):
         etc = utils.read_etc_hosts()
         new = serf.serf_all_hosts()
@@ -75,14 +60,3 @@ class BaseHandler(SerfHandler):
     @with_member_info
     def member_leave(self, members):
         self.update()
-        
-
-def actor_info():
-    try:
-        actor_files = os.listdir('/actors')
-    except OSError:
-        return json.dumps({})
-    info = {}
-    for actor_file in actor_files:
-        info[actor_file] = json.load(open('/actors/{}'.format(actor_file)))
-    return json.dumps(info)

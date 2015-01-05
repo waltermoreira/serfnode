@@ -1,7 +1,8 @@
 ---
 
 # Uncomment this variable and set a domain or ip of a registry to use
-# for exchanging images.  Use your username at the hub.docker.com to use the Docker hub.
+# for exchanging images.  Use your username at hub.docker.com to use
+# the Docker hub.
 #
 # remote_registry: localhost
 

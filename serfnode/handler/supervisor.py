@@ -44,8 +44,8 @@ def start(block, **kwargs):
 
 
 def start_docker(target, name, cmdline):
-    start('app.conf', target=target,
-          ARGS='--cidfile=/app --name={} {}'.format(name, cmdline),
+    start('launcher.conf', target=target,
+          ARGS='--name={} {}'.format(name, cmdline),
           NAME=name)
 
 

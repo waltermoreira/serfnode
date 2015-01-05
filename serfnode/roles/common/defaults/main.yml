@@ -27,4 +27,4 @@ serfnode_name: test
 
 # Role of the serfnode (to be queried via serf events).
 #
-role: my_role
+my_role: my_role

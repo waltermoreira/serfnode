@@ -1,6 +1,8 @@
 import os
 import subprocess
 
+import docker as dockerpy
+
 
 def env(image):
     """Return environment of image. """
@@ -42,3 +44,6 @@ DOCKER = path(os.environ.get('DOCKER_BINARY', '/usr/bin/docker'))
 DOCKER_SOCKET = 'unix://{}'.format(
     path(os.environ.get('DOCKER_SOCKET', '/run/docker.sock')))
 DOCKER_RUN = os.environ.get('DOCKER_RUN')
+
+
+client = dockerpy.Client(base_url=DOCKER_SOCKET)

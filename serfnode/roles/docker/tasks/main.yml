@@ -14,6 +14,19 @@
     creates: /usr/bin/docker
   sudo: yes
 
+- name: Ensure docker is running
+  service:
+    name: docker
+    state: running
+  sudo: yes
+
+- name: Add user to docker group
+  user:
+    name: "{{ docker_user }}"
+    append: yes
+    groups: docker
+  sudo: yes
+
 - name: Install docker-py
   pip: name=docker-py
   sudo: yes

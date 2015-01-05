@@ -1,4 +1,5 @@
 import os
+import socket
 import subprocess
 
 import docker_utils
@@ -43,9 +44,15 @@ def start(block, **kwargs):
     supervisor_exec('start', '{}:*'.format(kwargs['target']))
 
 
-def start_docker(target, name, cmdline):
+def start_docker(target, name, cmdline, share_network=True):
+    args = ['--name={}'.format(name)]
+    if share_network:
+        args.extend([
+            '--net',
+            'container:{}'.format(socket.gethostname())])
+    args.append(cmdline)
     start('launcher.conf', target=target,
-          ARGS='--name={} {}'.format(name, cmdline),
+          ARGS=' '.join(args),
           NAME=name)
 
 

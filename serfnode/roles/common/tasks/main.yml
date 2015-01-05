@@ -5,7 +5,7 @@
 
 - name: Start serfnode
   docker:
-    image: serfnode
+    image: "{{ image_name }}"
     name: "{{ serfnode_name }}"
     volumes:
       - /:/host

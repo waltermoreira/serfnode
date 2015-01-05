@@ -1,5 +1,10 @@
 ---
 
+# Name of the image we are deploying.
+#
+image_name: serfnode
+
+
 # Uncomment this variable and set a domain or ip of a registry to use
 # for exchanging images.  Use your username at hub.docker.com to use
 # the Docker hub.

@@ -1,3 +1,4 @@
+import yaml
 import os
 import socket
 import fcntl
@@ -25,6 +26,13 @@ class BaseHandler(SerfHandler):
 
     def __init__(self, *args, **kwargs):
         super(BaseHandler, self).__init__(*args, **kwargs)
+        app_volumes = os.environ.get('APP_VOLUMES')
+        if app_volumes:
+            self.volumes = ' '.join(
+                '-v {}'.format(vol)
+                for vol in yaml.load(app_volumes))
+        else:
+            self.volumes = ''
         self.setup()
 
     def setup(self):

@@ -14,3 +14,10 @@
     state: running
     env:
       ROLE: "{{ my_role }}"
+      PEER: "{{ peer }}"
+      IP: "{{ ip }}"
+      SERVICE_IP: "{{ service_ip }}"
+      SERVICE_PORT: "{{ service_port }}"
+      SERF_PORT: "{{ serf_port }}"
+      RPC_PORT: "{{ rpc_port }}"
+      NODE_NAME: "{{ node_name }}"

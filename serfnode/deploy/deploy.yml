@@ -3,4 +3,4 @@
 - hosts: local
   roles:
     - docker
-    - common
+    - serfnode

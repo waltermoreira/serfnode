@@ -8,9 +8,11 @@ import time
 import traceback
 import cStringIO
 import shutil
+import socket
 
 import mischief.actors.pipe as p
 import mischief.actors.actor as a
+import docker_utils
 
 
 MAX_OUTPUT = 1000
@@ -120,3 +122,15 @@ def write_etc_hosts(etc):
     with open('/etc/hosts', 'w') as f:
         f.writelines(
             ' '.join([ip] + hosts)+'\n' for ip, hosts in ip_hosts.items())
+
+
+def get_ports():
+    """Get the ports mapping for this node."""
+
+    def _get_ports():
+        cinfo = docker_utils.client.inspect_container(socket.gethostname())
+        for port, host_ports in cinfo['NetworkSettings']['Ports'].items():
+            if host_ports is not None:
+                yield port, [host['HostPort'] for host in host_ports]
+
+    return json.dumps(dict(_get_ports()))

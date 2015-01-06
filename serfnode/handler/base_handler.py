@@ -6,7 +6,7 @@ import struct
 
 from serf_master import SerfHandler
 from utils import with_payload, truncated_stdout, with_member_info
-from info import NODE_INFO
+from info import NODE_INFO, NODE_PORTS
 import supervisor
 import docker_utils
 import utils
@@ -49,6 +49,14 @@ class BaseHandler(SerfHandler):
         my_role = os.environ.get('ROLE') or 'no_role'
         if my_role == role:
             print(NODE_INFO)
+
+    @truncated_stdout
+    @with_payload
+    def ports(self, role=None):
+        my_role = os.environ.get('ROLE') or 'no_role'
+        if my_role == role:
+            print(NODE_PORTS)
+
 
     def update(self):
         etc = utils.read_etc_hosts()

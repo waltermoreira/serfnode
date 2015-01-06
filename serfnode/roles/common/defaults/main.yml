@@ -1,9 +1,7 @@
 ---
 
 # Name of the image we are deploying.
-#
 image_name: serfnode
-
 
 # Uncomment this variable and set a domain or ip of a registry to use
 # for exchanging images.  Use your username at hub.docker.com to use
@@ -11,12 +9,10 @@ image_name: serfnode
 #
 # remote_registry: localhost
 
-
 # Define the exposed ports of the app.  These ports get mapped to
 # random ports in the host, which can be queried by sending a "where"
 # message to the serfnode.  Use 'mapped_ports' for a deterministic
 # mapping.
-#
 exposed_ports:
   - 1234
   - 7000
@@ -24,9 +20,7 @@ exposed_ports:
 mapped_ports:
   - "8000:8000"
 
-
 # Name of the container for the serfnode.
-#
 serfnode_name: test
 
 

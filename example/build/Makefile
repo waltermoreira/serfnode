@@ -1,8 +1,10 @@
 .PHONY: clean
 
-build: Dockerfile handler/*
+all: .build
+
+.build: Dockerfile handler/*
 	docker build -t rabbit .
-	touch build
+	touch .build
 
 clean:
-	rm build
+	rm .build

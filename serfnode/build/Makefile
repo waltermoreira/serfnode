@@ -1,8 +1,10 @@
 .PHONY: clean
 
-build: Dockerfile handler/* programs/* serfnode.conf
+all: .build
+
+.build: Dockerfile handler/* programs/* serfnode.conf
 	docker build -t serfnode .
-	touch build
+	touch .build
 
 clean:
-	rm build
+	rm .build

@@ -46,9 +46,6 @@ serf_port:
 # port where the serf agent accepts commands (int)
 rpc_port:
 
-# name of the node. Defaults to a random unique id (str)
-node_name:
-
 # list of volumes to mount in the application container (str)
 # For example:
 # app_volumes:

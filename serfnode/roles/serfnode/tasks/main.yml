@@ -20,5 +20,4 @@
       SERVICE_PORT: "{{ service_port }}"
       SERF_PORT: "{{ serf_port }}"
       RPC_PORT: "{{ rpc_port }}"
-      NODE_NAME: "{{ node_name }}"
       APP_VOLUMES: "{{ app_volumes }}"

@@ -38,7 +38,7 @@ ip:
 service_ip:
 
 # port of the ip this node provides (int)
-service_port: 1234
+service_port:
 
 # port where the serf agent is listening (int)
 serf_port:

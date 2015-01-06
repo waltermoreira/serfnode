@@ -133,4 +133,6 @@ def get_ports():
             if host_ports is not None:
                 yield port, [host['HostPort'] for host in host_ports]
 
-    return json.dumps(dict(_get_ports()))
+    return json.dumps({
+        'ports': dict(_get_ports()),
+        'ip': os.environ.get('IP') or p.get_local_ip('8.8.8.8')})

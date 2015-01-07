@@ -5,7 +5,7 @@
     - role: serfnode
       image_name: {{cookiecutter.node_name}}
       my_role: {{cookiecutter.node_name}}
-      serfnode_name: {{cookiecutter.node_name}}
+      serfnode_name: node_{{cookiecutter.node_name}}
       exposed_ports:
         - 15672
       mapped_ports:

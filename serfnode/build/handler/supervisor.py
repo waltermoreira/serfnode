@@ -44,7 +44,8 @@ def start(block, **kwargs):
     supervisor_exec('start', '{}:*'.format(kwargs['target']))
 
 
-def start_docker(target, name, cmdline, share_network=True):
+def start_docker(target, cmdline, share_network=True):
+    name = 'app_{}'.format(socket.gethostname())
     args = ['--name={}'.format(name)]
     if share_network:
         args.extend([

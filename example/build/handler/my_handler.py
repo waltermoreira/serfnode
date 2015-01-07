@@ -8,5 +8,4 @@ class MyHandler(BaseHandler):
         super(MyHandler, self).setup()
         supervisor.start_docker(
             'rabbitmq.conf',
-            'rabbitmq',
             '--rm {} dockerfile/rabbitmq'.format(self.volumes))

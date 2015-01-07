@@ -1,0 +1,14 @@
+---
+
+- hosts: local
+  roles:
+    - role: serfnode
+      image_name: {{cookiecutter.node_name}}
+      my_role: {{cookiecutter.node_name}}
+      serfnode_name: {{cookiecutter.node_name}}
+      exposed_ports:
+        - 15672
+      mapped_ports:
+        - "15672:15672"
+      app_volumes:
+        - /tmp:/data

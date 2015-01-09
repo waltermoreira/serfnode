@@ -1,6 +1,6 @@
 .PHONY: clean
 
-build: Dockerfile template/*
+build: Dockerfile entry.sh template/*
 	docker build -t serfnode_init .
 	touch .build
 

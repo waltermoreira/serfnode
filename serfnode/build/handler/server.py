@@ -78,3 +78,7 @@ class Server(object):
                     resp = {'exception': exc}
                 finally:
                     s.send_json(resp)
+
+    def join(self):
+        self.thread.join()
+

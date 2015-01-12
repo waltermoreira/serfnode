@@ -18,6 +18,6 @@ COPY handler /handler
 COPY serfnode.conf /etc/supervisor/conf.d/
 COPY programs /programs
 
-EXPOSE 7946 7373
+EXPOSE 7946 7946/udp 7373
 
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]

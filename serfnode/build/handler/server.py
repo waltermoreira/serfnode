@@ -7,7 +7,7 @@ from logbook import Logger
 
 
 Context = zmq.Context()
-logger = Logger('minion server')
+logger = Logger('generic server')
 
 
 @contextmanager

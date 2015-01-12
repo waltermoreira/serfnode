@@ -5,7 +5,7 @@ MAINTAINER Walter Moreira <wmoreira@tacc.utexas.edu>
 RUN apt-get update -y && \
     apt-get install -y python python-dev python-pip supervisor git
 RUN apt-get install -y libzmq-dev
-RUN pip install serf_master fig jinja2 ipython
+RUN pip install serf_master fig jinja2 ipython logbook
 WORKDIR /tmp
 RUN echo 10
 RUN git clone https://github.com/waltermoreira/mischief.git

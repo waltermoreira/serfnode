@@ -52,3 +52,6 @@ rpc_port:
 #   - /tmp:/foo
 #   - /bin:/bar
 app_volumes:
+
+# whether the container will run in privileged mode
+privileged:

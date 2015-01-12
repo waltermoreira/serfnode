@@ -82,3 +82,12 @@ class Server(object):
     def join(self):
         self.thread.join()
 
+
+def client(ip, port):
+    s = Context.socket(zmq.REQ)
+    s.connect('tcp://{}:{}'.format(ip, port))
+    def _send(msg):
+        s.send_json(msg)
+        return s.recv_json()
+    return _send
+

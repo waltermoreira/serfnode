@@ -48,10 +48,15 @@ class BaseHandler(SerfHandler):
         self.volumes_from = collect_app_volumes_from()
         self.all_volumes = self.volumes + self.volumes_from
         self.setup()
+        self.notify()
 
     def setup(self):
         self.update()
         self.docker_run()
+
+    def notify(self):
+        with open('/agent_up', 'w') as f:
+            f.write('')
 
     def docker_run(self):
         if docker_utils.DOCKER_RUN:

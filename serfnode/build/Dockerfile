@@ -17,6 +17,7 @@ COPY serf /usr/bin/
 COPY handler /handler
 COPY serfnode.conf /etc/supervisor/conf.d/
 COPY programs /programs
+COPY me.py /me
 
 EXPOSE 7946 7946/udp 7373
 

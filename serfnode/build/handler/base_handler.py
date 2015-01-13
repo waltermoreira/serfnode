@@ -26,7 +26,8 @@ def collect_app_volumes():
     """Construct -v parameter to mount volumes in app."""
 
     app_volumes = os.environ.get('APP_VOLUMES')
-    return (' '.join('-v {}'.format(vol for vol in yaml.load(app_volumes)))
+    return (' '.join('-v {}'.format(vol)
+                     for vol in yaml.load(app_volumes))
             if app_volumes else '')
 
 
@@ -34,8 +35,8 @@ def collect_app_volumes_from():
     """Construct --volumes_from parameter to mount volumes in app."""
 
     app_volumes_from = os.environ.get('APP_VOLUMES_FROM')
-    return (' '.join('--volumes_from {}'.
-                     format(vol for vol in yaml.load(app_volumes_from)))
+    return (' '.join('--volumes-from {}'.format(vol)
+                     for vol in yaml.load(app_volumes_from))
             if app_volumes_from else '')
 
 

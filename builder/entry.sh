@@ -17,4 +17,5 @@ else
     )
     rm -rf deploy/roles
     cp -r /tmp/my_serfnode/deploy/roles deploy/
+    cp /tmp/my_serfnode/deploy/deploy.sh deploy/
 fi

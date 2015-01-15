@@ -43,8 +43,9 @@ def _find(lst, x):
 def main():
     role = os.environ.get('ROLE') or 'no_role'
     cmd = ('serf agent -event-handler=/handler/handler.py '
-           '-log-level=debug -tag role={role}'
+           '-log-level=debug -tag'
            .format(**locals()).split())
+    cmd.append('role={role}'.format(**locals()))
 
     contact = os.environ.get('PEER')
     if contact:

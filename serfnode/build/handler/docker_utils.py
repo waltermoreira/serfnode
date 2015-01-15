@@ -40,7 +40,7 @@ def fig(*args):
     return subprocess.check_output(cmd, shell=True).strip()
 
 
-DOCKER = path(os.environ.get('DOCKER_BINARY', '/usr/bin/docker'))
+DOCKER = '/usr/bin/docker'
 DOCKER_SOCKET = 'unix://{}'.format(
     path(os.environ.get('DOCKER_SOCKET', '/run/docker.sock')))
 DOCKER_RUN = os.environ.get('DOCKER_RUN')

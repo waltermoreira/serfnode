@@ -23,7 +23,7 @@ def docker(*args):
 
     docker_binary = DOCKER
     docker_socket = DOCKER_SOCKET
-    cmd = ('{docker_binary} -H unix://{docker_socket}'
+    cmd = ('{docker_binary} -H {docker_socket}'
            .format(**locals()).split())
     cmd.extend(args)
     return subprocess.check_output(cmd).strip()

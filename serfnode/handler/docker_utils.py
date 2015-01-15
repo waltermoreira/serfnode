@@ -19,8 +19,8 @@ def path(p):
 def docker(*args):
     """Execute a docker command inside the container. """
 
-    docker_binary = path(os.environ.get('DOCKER_BINARY', '/usr/bin/docker'))
-    docker_socket = path(os.environ.get('DOCKER_SOCKET', '/run/docker.sock'))
+    docker_binary = DOCKER
+    docker_socket = DOCKER_SOCKET
     cmd = ('{docker_binary} -H unix://{docker_socket}'
            .format(**locals()).split())
     cmd.extend(args)

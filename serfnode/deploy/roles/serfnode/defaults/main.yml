@@ -17,8 +17,7 @@ exposed_ports:
   - 1234
   - 7000
   - 8000
-mapped_ports:
-  - "8000:8000"
+mapped_ports: []
 
 # Name of the container for the serfnode.
 serfnode_name: test

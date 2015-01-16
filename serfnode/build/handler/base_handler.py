@@ -1,4 +1,5 @@
 import yaml
+import json
 import os
 import socket
 import fcntl
@@ -74,8 +75,7 @@ class BaseHandler(SerfHandler):
     def ports(self, role=None):
         my_role = os.environ.get('ROLE') or 'no_role'
         if my_role == role:
-            print(NODE_PORTS)
-
+            print(json.dumps(NODE_PORTS))
 
     def update(self):
         etc = utils.read_etc_hosts()

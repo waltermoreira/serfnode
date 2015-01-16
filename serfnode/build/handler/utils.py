@@ -7,6 +7,7 @@ import sys
 import time
 import traceback
 import cStringIO
+import re
 import shutil
 import socket
 
@@ -133,6 +134,35 @@ def get_ports():
             if host_ports is not None:
                 yield port, [host['HostPort'] for host in host_ports]
 
-    return json.dumps({
+    return {
         'ports': dict(_get_ports()),
-        'ip': os.environ.get('IP') or p.get_local_ip('8.8.8.8')})
+        'ip': os.environ.get('IP') or p.get_local_ip('8.8.8.8')
+    }
+
+
+def encode_ports(ports):
+    """Dict[str, Any] -> str"""
+
+    protocols = {'tcp': 't', 'udp': 'u'}
+
+    def one_port():
+        for internal, externals in ports.items():
+            internal_port, protocol = internal.split('/')
+            all_externals = ','.join(externals)
+            short_proto = protocols[protocol]
+            yield ('{internal_port}{short_proto}{all_externals}'.
+                   format(**locals()))
+
+    return '|'.join(one_port())
+
+
+def decode_ports(port_string):
+    """str -> Dict[str, Any]"""
+
+    def split_one_map(map_str):
+        internal, externals = re.split('[tu]', map_str)
+        internal_port = '{}/{}'.format(
+            internal, 'tcp' if 't' in map_str else 'u')
+        return internal_port, externals.split(',')
+
+    return dict(map(split_one_map, port_string.split('|')))

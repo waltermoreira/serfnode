@@ -15,7 +15,7 @@ import subprocess
 import uuid
 import time
 
-from utils import save_info
+from utils import save_info, get_ports, encode_ports
 from mischief.actors.pipe import get_local_ip
 
 
@@ -72,6 +72,9 @@ def main():
 
     service_port = os.environ.get('SERVICE_PORT') or 0
     cmd.extend(['-tag', 'service_port={}'.format(service_port)])
+
+    cmd.extend(['-tag', 'ports={}'.format(
+        encode_ports(get_ports()['ports']))])
 
     save_info(node, ip, bind_port, rpc_port)
 

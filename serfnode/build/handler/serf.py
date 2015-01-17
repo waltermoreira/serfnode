@@ -3,6 +3,7 @@ import subprocess
 import sys
 
 import info
+import utils
 
 
 def serf(*args):
@@ -53,13 +54,17 @@ def serf_all_hosts():
             ip = member['tags']['service']
             role = member['tags']['role']
             timestamp = member['tags']['timestamp']
-            hosts.setdefault(role, []).append((ip, timestamp))
+            port_mapping = utils.decode_ports(member['tags']['ports'])
+            hosts.setdefault(role, []).append(
+                {'ip': ip,
+                 'timestamp': timestamp,
+                 'ports': port_mapping})
     return hosts
 
 
 def serf_recent_hosts(all_hosts):
     hosts = {}
-    for role, ips_n_time in all_hosts.items():
-        ip = max(ips_n_time, key=lambda it: it[1])[0]
+    for role, info in all_hosts.items():
+        ip = max(info, key=lambda it: it['timestamp'])['ip']
         hosts[role] = ip
     return hosts

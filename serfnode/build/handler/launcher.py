@@ -19,14 +19,14 @@ def handler(name, signum, frame):
 
 def launch(name, args):
     try:
-        os.unlink('/app')
+        os.unlink('/child_{}'.format(name))
     except OSError:
         pass
     try:
         docker_utils.client.remove_container(name, force=True)
     except Exception:
         pass
-    args.insert(0, '--cidfile=/app')
+    args.insert(0, '--cidfile=/child_{}'.format(name))
     docker_utils.docker('run', *args)
 
 

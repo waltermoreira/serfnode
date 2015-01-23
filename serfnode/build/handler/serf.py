@@ -65,7 +65,7 @@ def is_self(node):
 
 def serf_all_hosts():
     """Return a dictionary of all hosts and their info"""
-    
+
     members = serf('members')['members']
     hosts = {}
     for member in members:

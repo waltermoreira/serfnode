@@ -7,7 +7,6 @@ RUN apt-get update -y && \
 RUN apt-get install -y libzmq-dev
 RUN pip install serf_master fig jinja2 ipython logbook
 WORKDIR /tmp
-RUN echo 10
 RUN git clone https://github.com/waltermoreira/mischief.git
 WORKDIR /tmp/mischief
 RUN python setup.py install
@@ -19,6 +18,7 @@ COPY handler /handler
 COPY serfnode.conf /etc/supervisor/conf.d/
 COPY programs /programs
 COPY me.py /me
+COPY serfnode.yml /serfnode.yml
 
 EXPOSE 7946 7946/udp 7373
 

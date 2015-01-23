@@ -54,6 +54,7 @@ class BaseHandler(SerfHandler):
     def setup(self):
         self.update()
         self.docker_run()
+        self.spawn_children()
 
     def notify(self):
         with open('/agent_up', 'w') as f:
@@ -62,6 +63,17 @@ class BaseHandler(SerfHandler):
     def docker_run(self):
         if docker_utils.DOCKER_RUN:
             supervisor.start('docker_run.conf', target='docker_run')
+
+    def spawn_children(self):
+        """Read /serfnode.yml and start containers"""
+
+        if not os.path.exists('/serfnode.yml'):
+            return
+
+        with open('/serfnode.yml') as input:
+            containers = yaml.load(input)
+            for name, run_stmt in containers.items():
+                supervisor.start_docker(name, run_stmt)
 
     @truncated_stdout
     @with_payload

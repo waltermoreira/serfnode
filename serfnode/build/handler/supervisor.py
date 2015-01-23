@@ -1,6 +1,7 @@
 import os
 import socket
 import subprocess
+import uuid
 
 import docker_utils
 import docker
@@ -45,7 +46,7 @@ def start(block, **kwargs):
 
 
 def start_docker(target, cmdline, share_network=True):
-    name = 'app_{}'.format(socket.gethostname())
+    name = 'app_{}_{}'.format(socket.gethostname(), uuid.uuid4())
     args = ['--name={}'.format(name)]
     if share_network:
         args.extend([

@@ -1,0 +1,13 @@
+---
+
+# Containers to launch on startup
+# The value is a docker run statement.
+# For example:
+#
+# my_container: --name foo ubuntu sleep infinity
+#
+# will execute 'docker run --name foo ubuntu sleep infinity'
+
+#my_container: ubuntu sleep infinity
+#other: ubuntu sleep infinity
+

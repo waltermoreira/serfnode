@@ -165,4 +165,5 @@ def decode_ports(port_string):
             internal, 'tcp' if 't' in map_str else 'u')
         return internal_port, externals.split(',')
 
-    return dict(map(split_one_map, port_string.split('|')))
+    return dict(map(split_one_map,
+                    [port for port in port_string.split('|') if port]))

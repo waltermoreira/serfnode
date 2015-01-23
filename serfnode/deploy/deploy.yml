@@ -3,4 +3,9 @@
 - hosts: local
   roles:
     - docker
-    - serfnode
+    - role: serfnode
+      exposed_ports: 
+        - 8000
+        - 9000
+      mapped_ports:
+        - "9000:9000"

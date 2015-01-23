@@ -14,6 +14,16 @@ def serf(*args):
     return json.loads(subprocess.check_output(cmd))
 
 
+def serf_plain(*args):
+    """Call serf with regular output"""
+
+    args = list(args)
+    rpc_port = info.NODE_INFO['rpc_port']
+    args[1:1] = ['-rpc-addr', '127.0.0.1:{}'.format(rpc_port)]
+    cmd = ['serf'] + args
+    return subprocess.check_output(cmd)
+
+
 def serf_event(name, *args):
     rpc_port = info.NODE_INFO['rpc_port']
     cmd = ['serf', 'event',

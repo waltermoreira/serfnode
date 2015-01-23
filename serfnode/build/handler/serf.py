@@ -7,6 +7,8 @@ import utils
 
 
 def serf(*args):
+    """Call serf with output in json format"""
+
     args = list(args)
     rpc_port = info.NODE_INFO['rpc_port']
     args[1:1] = ['-rpc-addr', '127.0.0.1:{}'.format(rpc_port)]
@@ -28,6 +30,8 @@ def serf_plain(*args):
 
 
 def serf_event(name, *args):
+    """Send and event trough serf"""
+
     rpc_port = info.NODE_INFO['rpc_port']
     cmd = ['serf', 'event',
            '-rpc-addr', '127.0.0.1:{}'.format(rpc_port),
@@ -60,6 +64,8 @@ def is_self(node):
 
 
 def serf_all_hosts():
+    """Return a dictionary of all hosts and their info"""
+    
     members = serf('members')['members']
     hosts = {}
     for member in members:

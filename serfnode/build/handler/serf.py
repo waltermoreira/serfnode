@@ -14,6 +14,9 @@ def serf(*args):
     return json.loads(subprocess.check_output(cmd))
 
 
+serf_json = serf
+
+
 def serf_plain(*args):
     """Call serf with regular output"""
 

@@ -23,31 +23,10 @@ def get_ip_address(ifname):
     )[20:24])
 
 
-def collect_app_volumes():
-    """Construct -v parameter to mount volumes in app."""
-
-    app_volumes = os.environ.get('APP_VOLUMES')
-    return (' '.join('-v {}'.format(vol)
-                     for vol in yaml.load(app_volumes))
-            if app_volumes else '')
-
-
-def collect_app_volumes_from():
-    """Construct --volumes_from parameter to mount volumes in app."""
-
-    app_volumes_from = os.environ.get('APP_VOLUMES_FROM')
-    return (' '.join('--volumes-from {}'.format(vol)
-                     for vol in yaml.load(app_volumes_from))
-            if app_volumes_from else '')
-
-
 class BaseHandler(SerfHandler):
 
     def __init__(self, *args, **kwargs):
         super(BaseHandler, self).__init__(*args, **kwargs)
-        self.volumes = collect_app_volumes()
-        self.volumes_from = collect_app_volumes_from()
-        self.all_volumes = self.volumes + self.volumes_from
         self.setup()
         self.notify()
 

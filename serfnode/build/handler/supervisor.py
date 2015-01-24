@@ -58,6 +58,28 @@ def start_docker(target, cmdline, share_network=True):
           NAME=name)
 
 
+def install_launcher(target, cmdline, share_network=True):
+    print("Will start {} with cmdline: {}".format(target, cmdline))
+    name = 'app_{}_{}'.format(socket.gethostname(), uuid.uuid4())
+    args = ['--name={}'.format(name)]
+    if share_network:
+        args.extend([
+            '--net',
+            'container:{}'.format(socket.gethostname())])
+    args.append(cmdline)
+    supervisor_install('launcher.conf', target=target,
+                       ARGS=' '.join(args),
+                       NAME=name)
+
+
+def install_docker_run(cmdline):
+    print("Will start docker_run with cmdline: {}".format(cmdline))
+    name = 'app_docker_run'
+    supervisor_install('launcher.conf', target='docker_run',
+                       ARGS=cmdline,
+                       NAME=name)
+
+
 def stop(block):
     supervisor_exec('stop', '{}:*'.format(block))
 

@@ -22,4 +22,4 @@ COPY serfnode.yml /serfnode.yml
 
 EXPOSE 7946 7946/udp 7373
 
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/handler/entry.sh"]

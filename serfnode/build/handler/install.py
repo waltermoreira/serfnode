@@ -38,13 +38,29 @@ def spawn_children():
 
 
 def spawn_docker_run():
+    """Spawn a child from a DOCKER_RUN env variable"""
+
     if docker_utils.DOCKER_RUN:
         supervisor.install_docker_run(docker_utils.DOCKER_RUN)
+
+
+def spawn_py():
+    """Spawn children from a python file"""
+
+    try:
+        import serfnode
+    except ImportError:
+        return
+    volumes = collect_app_volumes()
+    volumes_from = collect_app_volumes_from()
+    all_volumes = volumes + volumes_from
+    serfnode.spawn(all_volumes)
 
 
 def main():
     spawn_children()
     spawn_docker_run()
+    spawn_py()
 
 
 if __name__ == '__main__':

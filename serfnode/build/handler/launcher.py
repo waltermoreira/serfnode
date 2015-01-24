@@ -11,7 +11,8 @@ import docker_utils
 def handler(name, signum, frame):
     print('Should kill', name)
     try:
-        docker_utils.client.remove_container(name, force=True)
+        cid = open('/child_{}'.format(name)).read().strip()
+        docker_utils.client.remove_container(cid, force=True)
     except Exception:
         pass
     sys.exit(0)
@@ -19,11 +20,15 @@ def handler(name, signum, frame):
 
 def launch(name, args):
     try:
+        cid = open('/child_{}'.format(name)).read().strip()
+    except IOError:
+        cid = name
+    try:
         os.unlink('/child_{}'.format(name))
     except OSError:
         pass
     try:
-        docker_utils.client.remove_container(name, force=True)
+        docker_utils.client.remove_container(cid, force=True)
     except Exception:
         pass
     args.insert(0, '--cidfile=/child_{}'.format(name))

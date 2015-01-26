@@ -4,6 +4,7 @@ import functools
 import json
 import os
 import signal
+import socket
 import sys
 
 import docker_utils
@@ -34,15 +35,14 @@ def launch(name, args):
     except Exception:
         pass
     args.insert(0, '--cidfile=/child_{}'.format(name))
-    docker_utils.docker('run', '-d', *args)
+    docker_utils.docker('run',
+                        '--volumes-from={}'.format(socket.gethostname()),
+                        *args)
 
 
-def inject_ip(name):
-    cid = open('/child_{}'.format(name)).read().strip()
-    content = json.dumps(NODE_INFO)
-    docker_utils.docker('exec', cid,
-                        'bash', '-c',
-                        "echo '{}' > /parent_info".format(content))
+def inject_ip():
+    with open('/serfnode/parent_info', 'w') as parent_info:
+        json.dump(NODE_INFO, parent_info)
 
 
 def wait(name):
@@ -54,6 +54,5 @@ if __name__ == '__main__':
     name = sys.argv[1]
     args = sys.argv[2:]
     signal.signal(signal.SIGINT, functools.partial(handler, name))
+    inject_ip()
     launch(name, args)
-    inject_ip(name)
-    wait(name)

@@ -23,6 +23,11 @@ def get_ip_address(ifname):
     )[20:24])
 
 
+def update_nodes_info():
+    with open('/serfnode/nodes.json', 'w') as nodes:
+        json.dump(serf.serf_all_hosts(), nodes)
+
+
 class BaseHandler(SerfHandler):
 
     def __init__(self, *args, **kwargs):
@@ -57,6 +62,7 @@ class BaseHandler(SerfHandler):
         recent = serf.serf_recent_hosts(new)
         etc.update(recent)
         utils.write_etc_hosts(etc)
+        update_nodes_info()
 
     @with_member_info
     def member_join(self, members):

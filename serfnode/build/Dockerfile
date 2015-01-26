@@ -22,4 +22,7 @@ COPY serfnode.yml /serfnode.yml
 
 EXPOSE 7946 7946/udp 7373
 
+RUN mkdir /serfnode
+VOLUME /serfnode
+
 CMD ["/handler/entry.sh"]

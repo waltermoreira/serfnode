@@ -25,6 +25,10 @@ def collect_app_volumes_from():
             if app_volumes_from else '')
 
 
+def all_volumes():
+    return collect_app_volumes() + collect_app_volumes_from()
+
+
 def spawn_children():
     """Read /serfnode.yml and start containers"""
 
@@ -35,7 +39,7 @@ def spawn_children():
     with open('/serfnode.yml') as input:
         containers = yaml.load(input) or {}
         for name, run_stmt in containers.items():
-            supervisor.install_launcher(name, run_stmt)
+            supervisor.install_launcher(name, all_volumes() + ' ' + run_stmt)
 
 
 def spawn_docker_run():
@@ -52,10 +56,7 @@ def spawn_py():
         import serfnode
     except ImportError:
         return
-    volumes = collect_app_volumes()
-    volumes_from = collect_app_volumes_from()
-    all_volumes = volumes + volumes_from
-    serfnode.spawn(all_volumes)
+    serfnode.spawn(all_volumes())
 
 
 def check_docker_access():

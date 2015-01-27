@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import sys
 
 import supervisor
 import yaml
@@ -57,7 +58,24 @@ def spawn_py():
     serfnode.spawn(all_volumes)
 
 
+def check_docker_access():
+    """Check that we have access to the docker socket"""
+
+    try:
+        version = docker_utils.client.version()
+        print('Access to docker successful: Docker {}, api {}'
+              .format(version['Version'], version['ApiVersion']))
+    except Exception:
+        print('Serfnode needs access to the docker socket.')
+        print('For easy access, if you are a trustful person, use:')
+        print('')
+        print('    docker run -v /:/host ...')
+        print('')
+        sys.exit(1)
+
+
 def main():
+    check_docker_access()
     spawn_children()
     spawn_docker_run()
     spawn_py()

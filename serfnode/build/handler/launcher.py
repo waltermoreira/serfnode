@@ -35,14 +35,29 @@ def launch(name, args):
     except Exception:
         pass
     args.insert(0, '--cidfile=/child_{}'.format(name))
-    docker_utils.docker('run',
-                        '--volumes-from={}'.format(socket.gethostname()),
-                        *args)
+    return docker_utils.docker(
+        'run', '-d',
+        '--volumes-from={}'.format(socket.gethostname()),
+        *args)
 
 
 def inject_ip():
     with open('/serfnode/parent_info', 'w') as parent_info:
         json.dump(NODE_INFO, parent_info)
+
+
+def inject_parent_info():
+    with open('/serfnode/parent.json', 'w') as f:
+        info = json.loads(
+            docker_utils.docker('inspect', socket.gethostname()))
+        json.dump(info[0], f)
+
+
+def inject_child_info(cid):
+    info = json.loads(docker_utils.docker('inspect', cid))
+    docker_utils.docker(
+        'exec', cid, 'bash', '-c',
+        "echo '{}' > /me.json".format(json.dumps(info[0])))
 
 
 def wait(name):
@@ -55,4 +70,7 @@ if __name__ == '__main__':
     args = sys.argv[2:]
     signal.signal(signal.SIGINT, functools.partial(handler, name))
     inject_ip()
-    launch(name, args)
+    inject_parent_info()
+    child = launch(name, args)
+    inject_child_info(child)
+    docker_utils.docker('wait', child)

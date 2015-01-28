@@ -9,5 +9,5 @@
 # will execute 'docker run --name foo ubuntu sleep infinity'
 
 #my_container: ubuntu sleep infinity
-#other: ubuntu sleep infinity
+other: ubuntu sleep infinity
 

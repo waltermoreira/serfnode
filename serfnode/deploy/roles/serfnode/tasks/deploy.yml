@@ -31,7 +31,7 @@
 
 - name: Save location of node
   lineinfile:
-    dest: "{{ tempfile }}"
+    dest: /tmp/me
     line: "{{ output.stdout }}"
     create: yes
     insertafter: EOF

@@ -68,7 +68,8 @@ def ansible(args):
         print(ansible_process.stderr.read())
         print(ansible_process.stdout.read())
         return
-    print(open('/tmp/me').read())
+    if playbook == 'deploy':
+        print(open('/tmp/me').read())
 
 
 def main():

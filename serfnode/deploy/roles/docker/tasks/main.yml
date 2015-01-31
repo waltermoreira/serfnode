@@ -8,6 +8,13 @@
   apt: name=curl
   sudo: yes
 
+- name: Ensure python is installed
+  apt: name={{ item }}
+  with_items:
+   - python
+   - python-pip
+  sudo: yes
+
 - name: Install docker
   shell: curl -sSL https://get.docker.com/ubuntu/ | sudo sh
   args:

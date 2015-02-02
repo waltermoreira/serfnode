@@ -13,7 +13,7 @@ import yaml
 
 def render_host(ip, user, key=None):
     with open('/deploy/hosts', 'w') as hosts:
-        key_line = ('ansible_ssk_private_key_file={}'.format(key)
+        key_line = ('ansible_ssh_private_key_file={}'.format(key)
                     if key is not None else '')
         hosts.write(
             '[all]\n'

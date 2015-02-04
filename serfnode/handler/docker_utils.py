@@ -44,6 +44,7 @@ DOCKER = '/usr/bin/docker'
 DOCKER_SOCKET = 'unix://{}'.format(
     path(os.environ.get('DOCKER_SOCKET', '/run/docker.sock')))
 DOCKER_RUN = os.environ.get('DOCKER_RUN')
+DOCKER_NAME = os.environ.get('DOCKER_NAME')
 
 
 client = dockerpy.Client(base_url=DOCKER_SOCKET)

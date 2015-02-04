@@ -46,7 +46,9 @@ def spawn_docker_run():
     """Spawn a child from a DOCKER_RUN env variable"""
 
     if docker_utils.DOCKER_RUN:
-        supervisor.install_docker_run(docker_utils.DOCKER_RUN)
+        print("Using DOCKER_RUN")
+        supervisor.install_docker_run(docker_utils.DOCKER_RUN,
+                                      docker_utils.DOCKER_NAME)
 
 
 def spawn_py():

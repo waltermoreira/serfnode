@@ -39,6 +39,8 @@ def task_build():
     def all_files():
         for d, _, fs in os.walk('.'):
             for f in fs:
+                if f.endswith('.pyc'):
+                    continue
                 if not f.startswith('.'):
                     yield os.path.join(d, f)
 

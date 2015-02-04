@@ -32,10 +32,10 @@ def all_volumes():
 def spawn_children():
     """Read /serfnode.yml and start containers"""
 
-    print("Spawning children")
     if not os.path.exists('/serfnode.yml'):
         return
 
+    print("Using serfnode.yml")
     with open('/serfnode.yml') as input:
         containers = yaml.load(input) or {}
         for name, run_stmt in containers.items():
@@ -58,6 +58,7 @@ def spawn_py():
         import serfnode
     except ImportError:
         return
+    print("Using serfnode.py")
     serfnode.spawn(all_volumes())
 
 

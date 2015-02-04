@@ -15,7 +15,7 @@ def handler(name, signum, frame):
     print('Should kill', name)
     try:
         cid = open('/child_{}'.format(name)).read().strip()
-        docker_utils.client.remove_container(cid, force=True)
+        docker_utils.client.kill(cid)
     except Exception:
         pass
     sys.exit(0)
@@ -31,9 +31,12 @@ def launch(name, args):
     except OSError:
         pass
     try:
-        docker_utils.client.remove_container(cid, force=True)
-    except Exception:
+        # first try to start the container, if it exists
+        docker_utils.client.start(cid)
+        return cid
+    except docker_utils.dockerpy.errors.APIError:
         pass
+    # if start fails, just do a 'run'
     args.insert(0, '--cidfile=/child_{}'.format(name))
     return docker_utils.docker(
         'run', '-d',

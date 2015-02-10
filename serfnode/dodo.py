@@ -46,6 +46,7 @@ def task_build():
 
     return {
         'actions': ['docker build -t serfnode .',
+                    'docker tag -f serfnode adama/serfnode',
                     'docker inspect -f "{{ .Id }}" serfnode > .build'],
         'targets': ['.build'],
         'file_dep': list(all_files()),

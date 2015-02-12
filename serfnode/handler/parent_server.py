@@ -2,6 +2,7 @@
 
 import os
 import select
+import json
 
 import serf
 
@@ -23,7 +24,14 @@ def server():
     while True:
         polling.poll()
         cmd = pipe.readline()
-        serf.serf_plain(*cmd.split())
+        try:
+            name, payload = json.loads(cmd)
+        except:
+            print("Wrong payload: {}".format(cmd))
+        try:
+            serf.serf_plain('event', name, json.dumps(payload))
+        except:
+            print("serf command failed")
 
 
 if __name__ == '__main__':

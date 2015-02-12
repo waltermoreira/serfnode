@@ -70,12 +70,11 @@ def check_docker_access():
         print('Access to docker successful: Docker {}, api {}'
               .format(version['Version'], version['ApiVersion']))
     except Exception:
-        print('Serfnode needs access to the docker socket.')
+        print('WARNING: Serfnode usually needs access to the docker socket.')
         print('For easy access, if you are a trustful person, use:')
         print('')
         print('    docker run -v /:/host ...')
         print('')
-        sys.exit(1)
 
 
 def main():

@@ -14,9 +14,13 @@ import os
 import subprocess
 import uuid
 import time
+import json
+import socket
+import traceback
 
 from utils import save_info, get_ports, encode_ports
 from mischief.actors.pipe import get_local_ip
+import docker_utils
 
 
 def find_port(start=1234):
@@ -38,6 +42,16 @@ def _find(lst, x):
         return _find(lst[idx:], x+1)
     else:
         return x
+
+
+def save_inspect():
+    with open('/me.json', 'w') as f:
+        try:
+            info = json.loads(
+                docker_utils.docker('inspect', socket.gethostname()))
+            json.dump(info[0], f)
+        except:
+            f.write(traceback.format_exc())
 
 
 def main():
@@ -77,6 +91,7 @@ def main():
         encode_ports(get_ports()['ports']))])
 
     save_info(node, ip, bind_port, rpc_port)
+    save_inspect()
 
     subprocess.check_call(cmd)
 

@@ -38,8 +38,16 @@ def spawn_children():
     print("Using serfnode.yml")
     with open('/serfnode.yml') as input:
         containers = yaml.load(input) or {}
-        for name, run_stmt in containers.items():
-            supervisor.install_launcher(name, all_volumes() + ' ' + run_stmt)
+        if type(containers) is dict:
+            for name, run_stmt in containers.items():
+                supervisor.install_launcher(
+                    name, all_volumes() + ' ' + run_stmt)
+        if type(containers) is list:
+            for pos, child in enumerate(containers):
+                name = child.keys()[0]
+                stmt = child[name]
+                supervisor.install_launcher(
+                    name, all_volumes() + ' ' + stmt, pos=pos)
 
 
 def spawn_docker_run():

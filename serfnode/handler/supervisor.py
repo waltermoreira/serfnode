@@ -58,7 +58,8 @@ def start_docker(target, cmdline, share_network=True):
           NAME=name)
 
 
-def install_launcher(target, cmdline, share_network=True, recycle=False):
+def install_launcher(target, cmdline,
+                     share_network=True, recycle=False, pos=None):
     print("Will start {} with cmdline: {}".format(target, cmdline))
     if recycle:
         name = target
@@ -70,9 +71,12 @@ def install_launcher(target, cmdline, share_network=True, recycle=False):
             '--net',
             'container:{}'.format(socket.gethostname())])
     args.append(cmdline)
+    if pos is not None:
+        pos = '--pos={}'.format(pos)
     supervisor_install('launcher.conf', target=target,
                        ARGS=' '.join(args),
-                       NAME=name)
+                       NAME=name,
+                       POS=pos or '')
 
 
 def install_docker_run(cmdline, name=None):

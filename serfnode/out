@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat $(ls -Art /var/log/supervisor/$1-stdout-* | tail -n 1)

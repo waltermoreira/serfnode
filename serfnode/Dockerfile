@@ -23,6 +23,8 @@ COPY me.py /me
 COPY serfnode.yml /serfnode.yml
 COPY deploy /deploy
 COPY entry.sh /bin/entry.sh
+COPY out /out
+COPY err /err
 
 EXPOSE 7946 7946/udp 7373
 

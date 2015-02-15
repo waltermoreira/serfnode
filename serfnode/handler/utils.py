@@ -4,7 +4,6 @@ from functools import wraps
 import json
 import os
 import sys
-import time
 import traceback
 import cStringIO
 import re
@@ -14,7 +13,6 @@ import socket
 import mischief.actors.pipe as p
 import mischief.actors.actor as a
 import docker_utils
-
 
 MAX_OUTPUT = 1000
 
@@ -67,29 +65,6 @@ def member_info(lines):
         member['role'] = parts[2]
         member['tags'] = dict(part.split('=') for part in parts[3].split(','))
         yield member
-
-
-def save_info(node, advertise, bind_port, rpc_port):
-    info = {
-        'node': node,
-        'ip': advertise,
-        'bind_port': bind_port,
-        'rpc_port': rpc_port
-    }
-    with open('/node_info', 'w') as out:
-        json.dump(info, out)
-
-
-def load_info():
-    """Load information about the node.
-
-    Block until the information is available.
-
-    """
-    while not os.path.exists('/node_info'):
-        time.sleep(0.1)
-
-    return json.load(open('/node_info'))
 
 
 def serf_aware_spawn(actor, name, **kwargs):

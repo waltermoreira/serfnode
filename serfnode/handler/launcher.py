@@ -7,10 +7,8 @@ import signal
 import socket
 import sys
 import time
-import argparse
 
 import docker_utils
-from info import NODE_INFO
 
 
 def handler(name, signum, frame):
@@ -57,7 +55,7 @@ def launch(name, args, pos=None):
 
 def inject_ip():
     with open('/serfnode/parent_info', 'w') as parent_info:
-        json.dump(NODE_INFO, parent_info)
+        json.dump({}, parent_info)
 
 
 def inject_parent_info():

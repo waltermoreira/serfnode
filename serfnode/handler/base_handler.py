@@ -1,4 +1,3 @@
-import yaml
 import json
 import os
 import socket
@@ -7,11 +6,12 @@ import struct
 
 from serf_master import SerfHandler
 from utils import with_payload, truncated_stdout, with_member_info
-from info import NODE_INFO, NODE_PORTS
-import supervisor
 import docker_utils
 import utils
 import serf
+
+NODE_INFO = ''
+NODE_PORTS = ''
 
 
 def get_ip_address(ifname):
@@ -28,10 +28,18 @@ def update_nodes_info():
         json.dump(serf.serf_all_hosts(), nodes)
 
 
+def save_me():
+    with open('/me.json', 'w') as f:
+        sid = serf.serf_json('info')['agent']['name']
+        inspect = docker_utils.client.inspect_container(socket.gethostname())
+        json.dump({'id': sid, 'inspect': inspect}, f)
+
+
 class BaseHandler(SerfHandler):
 
     def __init__(self, *args, **kwargs):
         super(BaseHandler, self).__init__(*args, **kwargs)
+        save_me()
         self.setup()
         self.notify()
 

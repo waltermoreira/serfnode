@@ -2,15 +2,15 @@ import json
 import subprocess
 import sys
 
-import info
 import utils
+import config
 
 
 def serf(*args):
     """Call serf with output in json format"""
 
     args = list(args)
-    rpc_port = info.NODE_INFO['rpc_port']
+    rpc_port = config.rpc_port
     args[1:1] = ['-rpc-addr', '127.0.0.1:{}'.format(rpc_port)]
     cmd = ['serf'] + args + ['-format=json']
     return json.loads(subprocess.check_output(cmd))
@@ -23,7 +23,7 @@ def serf_plain(*args):
     """Call serf with regular output"""
 
     args = list(args)
-    rpc_port = info.NODE_INFO['rpc_port']
+    rpc_port = config.rpc_port
     args[1:1] = ['-rpc-addr', '127.0.0.1:{}'.format(rpc_port)]
     cmd = ['serf'] + args
     return subprocess.check_output(cmd)
@@ -32,7 +32,7 @@ def serf_plain(*args):
 def serf_event(name, *args):
     """Send and event trough serf"""
 
-    rpc_port = info.NODE_INFO['rpc_port']
+    rpc_port = config.rpc_port
     cmd = ['serf', 'event',
            '-rpc-addr', '127.0.0.1:{}'.format(rpc_port),
            name] + list(args)
@@ -40,7 +40,7 @@ def serf_event(name, *args):
 
 
 def _query(name, service):
-    rpc_port = info.NODE_INFO['rpc_port']
+    rpc_port = config.rpc_port
     cmd = ['serf', 'query',
            '-rpc-addr', '127.0.0.1:{}'.format(rpc_port),
            '-format=json', name,

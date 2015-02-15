@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-import os
-
 from serf_master import SerfHandlerProxy
 from base_handler import BaseHandler
+import config
 try:
     from my_handler import MyHandler
 except ImportError:
@@ -11,6 +10,6 @@ except ImportError:
 
 if __name__ == '__main__':
     handler = SerfHandlerProxy()
-    role = os.environ.get('ROLE') or 'no_role'
+    role = config.role
     handler.register(role, MyHandler())
     handler.run()

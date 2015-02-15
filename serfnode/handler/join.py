@@ -9,89 +9,48 @@ address.
 
 """
 
-import bisect
-import os
 import subprocess
-import uuid
 import time
-import json
-import socket
-import traceback
 
-from utils import save_info, get_ports, encode_ports
-from mischief.actors.pipe import get_local_ip
-import docker_utils
-
-
-def find_port(start=1234):
-    """Find an unused port starting at ``start``. """
-
-    out = subprocess.check_output('netstat -antup'.split())
-    used_ports = sorted(set(int(line.split()[3].split(':')[-1])
-                            for line in out.splitlines()[2:]))
-    return _find(used_ports, start)
-
-
-def _find(lst, x):
-    if not lst:
-        return x
-    idx = bisect.bisect_left(lst, x)
-    if len(lst) <= idx:
-        return x
-    if lst[idx] == x:
-        return _find(lst[idx:], x+1)
-    else:
-        return x
-
-
-def save_inspect():
-    with open('/me.json', 'w') as f:
-        try:
-            info = json.loads(
-                docker_utils.docker('inspect', socket.gethostname()))
-            json.dump(info[0], f)
-        except:
-            f.write(traceback.format_exc())
+from utils import get_ports, encode_ports
+import config
 
 
 def main():
-    role = os.environ.get('ROLE') or 'no_role'
+    role = config.role
     cmd = ('serf agent -event-handler=/handler/handler.py '
            '-log-level=debug -tag'
            .format(**locals()).split())
     cmd.append('role={role}'.format(**locals()))
 
-    contact = os.environ.get('PEER')
+    contact = config.peer
     if contact:
         cmd.extend(['-join', contact])
 
-    ip = os.environ.get('IP') or get_local_ip('8.8.8.8')
-    bind_port = os.environ.get('SERF_PORT') or find_port(start=7946)
+    ip = config.ip
+    bind_port = config.bind_port
 
     cmd.extend(['-advertise', '{}:{}'.format(ip, bind_port)])
     cmd.extend(['-tag', 'ip={}'.format(ip),
                 '-tag', 'serf_port={}'.format(bind_port)])
     cmd.extend(['-bind', '0.0.0.0:{}'.format(bind_port)])
 
-    node = os.environ.get('NODE_NAME') or uuid.uuid4().hex
+    node = config.node
     cmd.extend(['-node', node])
 
-    rpc_port = os.environ.get('RPC_PORT') or find_port(start=7373)
+    rpc_port = config.rpc_port
     cmd.extend(['-rpc-addr', '127.0.0.1:{}'.format(rpc_port)])
     cmd.extend(['-tag', 'rpc={}'.format(rpc_port)])
     cmd.extend(['-tag', 'timestamp={}'.format(time.time())])
 
-    service = os.environ.get('SERVICE_IP') or ip
+    service = config.service
     cmd.extend(['-tag', 'service={}'.format(service)])
 
-    service_port = os.environ.get('SERVICE_PORT') or 0
+    service_port = config.service_port
     cmd.extend(['-tag', 'service_port={}'.format(service_port)])
 
     cmd.extend(['-tag', 'ports={}'.format(
         encode_ports(get_ports()['ports']))])
-
-    save_info(node, ip, bind_port, rpc_port)
-    save_inspect()
 
     subprocess.check_call(cmd)
 

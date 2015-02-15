@@ -54,18 +54,6 @@ def launch(name, args, pos=None):
     return cid
 
 
-def inject_ip():
-    with open('/serfnode/parent_info', 'w') as parent_info:
-        json.dump({}, parent_info)
-
-
-def inject_parent_info():
-    with open('/serfnode/parent.json', 'w') as f:
-        sid = serf.serf_json('info')['agent']['name']
-        inspect = docker_utils.client.inspect_container(socket.gethostname())
-        json.dump({'id': sid, 'inspect': inspect}, f)
-
-
 def inject_child_info(cid):
     info = {
         'id': serf.serf_json('info')['agent']['name'],
@@ -90,8 +78,6 @@ if __name__ == '__main__':
         name = sys.argv[1]
     args = sys.argv[2:]
     signal.signal(signal.SIGINT, functools.partial(handler, name))
-    inject_ip()
-    inject_parent_info()
     child = launch(name, args, pos=pos)
     inject_child_info(child)
     docker_utils.docker('wait', child)

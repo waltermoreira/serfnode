@@ -28,8 +28,8 @@ def update_nodes_info():
         json.dump(serf.serf_all_hosts(), nodes)
 
 
-def save_me():
-    with open('/me.json', 'w') as f:
+def save_me(loc):
+    with open(loc, 'w') as f:
         sid = serf.serf_json('info')['agent']['name']
         inspect = docker_utils.client.inspect_container(socket.gethostname())
         json.dump({'id': sid, 'inspect': inspect}, f)
@@ -39,7 +39,8 @@ class BaseHandler(SerfHandler):
 
     def __init__(self, *args, **kwargs):
         super(BaseHandler, self).__init__(*args, **kwargs)
-        save_me()
+        save_me('/me.json')
+        save_me('/serfnode/parent.json')
         self.setup()
         self.notify()
 

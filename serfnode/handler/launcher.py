@@ -9,6 +9,7 @@ import sys
 import time
 
 import docker_utils
+import serf
 
 
 def handler(name, signum, frame):
@@ -60,16 +61,19 @@ def inject_ip():
 
 def inject_parent_info():
     with open('/serfnode/parent.json', 'w') as f:
-        info = json.loads(
-            docker_utils.docker('inspect', socket.gethostname()))
-        json.dump(info[0], f)
+        sid = serf.serf_json('info')['agent']['name']
+        inspect = docker_utils.client.inspect_container(socket.gethostname())
+        json.dump({'id': sid, 'inspect': inspect}, f)
 
 
 def inject_child_info(cid):
-    info = json.loads(docker_utils.docker('inspect', cid))
+    info = {
+        'id': serf.serf_json('info')['agent']['name'],
+        'inspect': docker_utils.client.inspect_container(cid)
+    }
     docker_utils.docker(
         'exec', cid, 'bash', '-c',
-        "echo '{}' > /me.json".format(json.dumps(info[0])))
+        "echo '{}' > /me.json".format(json.dumps(info)))
 
 
 def wait(name):

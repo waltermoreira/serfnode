@@ -9,6 +9,7 @@ from utils import with_payload, truncated_stdout, with_member_info
 import docker_utils
 import utils
 import serf
+import config
 
 NODE_INFO = ''
 NODE_PORTS = ''
@@ -54,14 +55,14 @@ class BaseHandler(SerfHandler):
     @truncated_stdout
     @with_payload
     def where(self, role=None):
-        my_role = os.environ.get('ROLE') or 'no_role'
+        my_role = config.role
         if my_role == role:
             print(NODE_INFO)
 
     @truncated_stdout
     @with_payload
     def ports(self, role=None):
-        my_role = os.environ.get('ROLE') or 'no_role'
+        my_role = config.role
         if my_role == role:
             print(json.dumps(NODE_PORTS))
 

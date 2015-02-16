@@ -13,6 +13,7 @@ import socket
 import mischief.actors.pipe as p
 import mischief.actors.actor as a
 import docker_utils
+import config
 
 MAX_OUTPUT = 1000
 
@@ -70,7 +71,7 @@ def member_info(lines):
 def serf_aware_spawn(actor, name, **kwargs):
     """Spawn actor and save address info in ``/actor_info``. """
 
-    ip = os.environ.get('IP') or p.get_local_ip('8.8.8.8')
+    ip = config.ip
     kwargs['ip'] = ip
     proc = a.spawn(actor, **kwargs)
     try:
@@ -111,7 +112,7 @@ def get_ports():
 
     return {
         'ports': dict(_get_ports()),
-        'ip': os.environ.get('IP') or p.get_local_ip('8.8.8.8')
+        'ip': config.ip
     }
 
 

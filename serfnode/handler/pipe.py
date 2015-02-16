@@ -1,6 +1,9 @@
+from __future__ import print_function
+
 import os
 import select
 import json
+import sys
 
 
 def server(pipe_file, handler):
@@ -9,10 +12,6 @@ def server(pipe_file, handler):
     Commands are a string object that are passed to serf.
 
     """
-    try:
-        os.unlink(pipe_file)
-    except OSError:
-        pass
     os.mkfifo(pipe_file)
     pipe = os.fdopen(
         os.open(pipe_file, os.O_RDONLY | os.O_NONBLOCK), 'r', 0)
@@ -20,17 +19,23 @@ def server(pipe_file, handler):
     _pipe = os.fdopen(
         os.open(pipe_file, os.O_WRONLY | os.O_NONBLOCK), 'w', 0)
     polling = select.poll()
-    polling.register(pipe.fileno())
+    polling.register(pipe.fileno(), select.POLLIN)
     while True:
-        polling.poll()
-        cmd = pipe.readline()
+        result = polling.poll()
+        if not result:
+            continue
+        try:
+            cmd = pipe.readline()
+        except:
+            print('Could not read from pipe', file=sys.stderr)
+            continue
         try:
             obj = json.loads(cmd)
         except:
-            print("Wrong payload: {}".format(cmd))
+            print("Wrong payload: {}".format(cmd), file=sys.stderr)
             continue
         try:
             handler(obj)
         except:
-            print("handler failed")
+            print("handler failed", file=sys.stderr)
 

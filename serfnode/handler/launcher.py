@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 import functools
 import json
@@ -81,6 +82,8 @@ if __name__ == '__main__':
     child = launch(name, args, pos=pos)
     inject_child_info(child)
     # write child (cid) to known pipe
-    with open('/tmp/info_writer', 'w') as f:
-        f.write(json.dumps(child + '\n'))
+    while not os.path.exists('/tmp/children_server'):
+        time.sleep(0.1)
+    with open('/tmp/children_server', 'w') as f:
+        f.write(json.dumps(child) + '\n')
     docker_utils.docker('wait', child)

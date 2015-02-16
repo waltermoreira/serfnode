@@ -80,4 +80,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, functools.partial(handler, name))
     child = launch(name, args, pos=pos)
     inject_child_info(child)
+    # write child (cid) to known pipe
+    with open('/tmp/info_writer', 'w') as f:
+        f.write(json.dumps(child + '\n'))
     docker_utils.docker('wait', child)

@@ -11,9 +11,27 @@ address.
 
 import subprocess
 import time
+import json
+import multiprocessing
 
 from utils import get_ports, encode_ports
 import config
+import pipe
+
+
+def start_info_writer():
+    def _handler(obj):
+        try:
+            old = json.load(open('/children'))
+        except IOError:
+            old = []
+        old.append(obj)
+        with open('/children', 'w') as f:
+            f.write(json.dumps(old))
+
+    t = multiprocessing.Process(target=pipe.server,
+                                args=('/tmp/info_writer', _handler))
+    t.start()
 
 
 def main():
@@ -52,6 +70,7 @@ def main():
     cmd.extend(['-tag', 'ports={}'.format(
         encode_ports(get_ports()['ports']))])
 
+    start_info_writer()
     subprocess.check_call(cmd)
 
 

@@ -8,7 +8,7 @@ import yaml
 def read_serfnode_yml():
     with open('/serfnode.yml') as input:
         conf = yaml.load(input) or {}
-        return conf['serfnode']
+        return conf.get('serfnode', {})
 
 
 yml = read_serfnode_yml()

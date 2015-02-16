@@ -5,7 +5,6 @@ docker-py==0.7.2
 flexmock==0.9.7
 gnureadline==6.3.3
 ipython==2.4.1
-mischief==0.1.0
 py==1.4.26
 pytest==2.6.4
 pyzmq==14.5.0

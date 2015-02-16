@@ -11,7 +11,7 @@ serfnode:
 children:
   - my_container:
       image: ubuntu
-      cmd: sleep infinity
+      command: sleep infinity
       # links:
       #   - foo
       # ports:
@@ -22,7 +22,7 @@ children:
       #   - foo:/tmp
       # volumes_from:
       #   - bar
-      env:
+      environment:
         MY_VAR: 1
       working_dir: /tmp
       # entrypoint: bash
@@ -31,4 +31,4 @@ children:
 
   - other:
       image: ubuntu
-      cmd: sleep infinity
+      command: sleep infinity

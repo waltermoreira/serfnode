@@ -43,14 +43,14 @@ def install(pos, conf):
     volumes_from = wrap('--volumes-from=', params.get('volumes_from', []))
     env = wrap(' -e ',
                ['"{}={}"'.format(k, v)
-                for k, v in params.get('env', {}).items()])
+                for k, v in params.get('environment', {}).items()])
     working_dir = wrap('-w ', filter(None, [params.get('working_dir')]))
     entrypoint = wrap('--entrypoint=',
                       filter(None, [params.get('entrypoint')]))
     user = wrap('-u ', filter(None, [params.get('user')]))
     privileged = '--privileged' if params.get('privileged') else ''
     image = params['image']
-    cmd = params.get('cmd', '')
+    cmd = params.get('command', '')
 
     docker_run = ('{links} {ports} {expose} {volumes} '
                   '{volumes_from} {env} {working_dir} {entrypoint} '

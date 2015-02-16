@@ -25,8 +25,7 @@ def get_ip_address(ifname):
 
 
 def update_nodes_info():
-    with open('/serfnode/nodes.json', 'w') as nodes:
-        json.dump(serf.serf_all_hosts(), nodes)
+    serf.all_nodes_by_role_and_id()
 
 
 def get_info(cid):

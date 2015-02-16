@@ -1,13 +1,34 @@
 ---
 
-# Containers to launch on startup
-# The value is a docker run statement.
-# For example:
-#
-# my_container: --name foo ubuntu sleep infinity
-#
-# will execute 'docker run --name foo ubuntu sleep infinity'
+serfnode:
+  PEER: localhost
+  SERF_IP:
+  SERF_PORT:
+  SERVICE_IP:
+  SERVICE_PORT:
+  ROLE:
 
-#my_container: ubuntu sleep infinity
-#other: ubuntu sleep infinity
+children:
+  - my_container:
+      image: ubuntu
+      cmd: sleep infinity
+      # links:
+      #   - foo
+      # ports:
+      #   - "3:3"
+      # expose:
+      #   - "9"
+      # volumes:
+      #   - foo:/tmp
+      # volumes_from:
+      #   - bar
+      env:
+        MY_VAR: 1
+      working_dir: /tmp
+      # entrypoint: bash
+      # user: goo
+      privileged: no
 
+  - other:
+      image: ubuntu
+      cmd: sleep infinity

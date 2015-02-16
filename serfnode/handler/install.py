@@ -28,6 +28,38 @@ def all_volumes():
     return collect_app_volumes() + collect_app_volumes_from()
 
 
+def wrap(op, values):
+    return ' '.join('{}{}'.format(op, v) for v in values)
+
+
+def install(pos, conf):
+    name = conf.keys()[0]
+    params = conf[name]
+
+    links = wrap('--link=', params.get('links', []))
+    ports = wrap('-p ', params.get('ports', []))
+    expose = wrap('--expose=', params.get('expose', []))
+    volumes = wrap('-v ', params.get('volumes', []))
+    volumes_from = wrap('--volumes-from=', params.get('volumes_from', []))
+    env = wrap(' -e ',
+               ['"{}={}"'.format(k, v)
+                for k, v in params.get('env', {}).items()])
+    working_dir = wrap('-w ', filter(None, [params.get('working_dir')]))
+    entrypoint = wrap('--entrypoint=',
+                      filter(None, [params.get('entrypoint')]))
+    user = wrap('-u ', filter(None, [params.get('user')]))
+    privileged = '--privileged' if params.get('privileged') else ''
+    image = params['image']
+    cmd = params.get('cmd', '')
+
+    docker_run = ('{links} {ports} {expose} {volumes} '
+                  '{volumes_from} {env} {working_dir} {entrypoint} '
+                  '{user} {privileged} {image} {cmd}'
+                  .format(**locals()))
+    print("will run {}".format(docker_run))
+    supervisor.install_launcher(name, docker_run, pos=pos)
+
+
 def spawn_children():
     """Read /serfnode.yml and start containers"""
 
@@ -36,13 +68,10 @@ def spawn_children():
 
     print("Using serfnode.yml")
     with open('/serfnode.yml') as input:
-        containers = yaml.load(input) or {}
-        if type(containers) is list:
-            for pos, child in enumerate(containers):
-                name = child.keys()[0]
-                stmt = child[name]
-                supervisor.install_launcher(
-                    name, all_volumes() + ' ' + stmt, pos=pos)
+        yml = yaml.load(input) or {}
+        children = yml.get('children', {})
+        for pos, child in enumerate(children):
+            install(pos, child)
 
 
 def spawn_docker_run():

@@ -63,8 +63,9 @@ def launch(name, args, pos=None):
 
 
 def inject_child_info(cid):
+    id = json.load(open('/me.json'))['id']
     info = {
-        'id': serf.serf_json('info')['agent']['name'],
+        'id': id,
         'inspect': docker_utils.client.inspect_container(cid)
     }
     docker_utils.docker(
@@ -87,10 +88,16 @@ if __name__ == '__main__':
     args = sys.argv[2:]
     signal.signal(signal.SIGINT, functools.partial(handler, name))
     child = launch(name, args, pos=pos)
-    inject_child_info(child)
     # write child (cid) to known pipe
     while not os.path.exists('/tmp/children_server'):
         time.sleep(0.1)
     with open('/tmp/children_server', 'w') as f:
         f.write(json.dumps(child) + '\n')
+    while True:
+        try:
+            json.load(open('/me.json'))
+        except (ValueError, IOError):
+            time.sleep(0.1)
+            continue
+    inject_child_info(child)
     docker_utils.docker('wait', child)

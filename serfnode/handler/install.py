@@ -32,18 +32,21 @@ def wrap(op, values):
     return ' '.join('{}{}'.format(op, v) for v in values)
 
 
-def install(pos, conf):
+def install(pos, conf, master):
     name = conf.keys()[0]
     params = conf[name]
 
     links = wrap('--link=', params.get('links', []))
-    ports = wrap('-p ', params.get('ports', []))
+    ports = wrap('-p ', params.get('ports', []) + master.get('ports', []))
     expose = wrap('--expose=', params.get('expose', []))
-    volumes = wrap('-v ', params.get('volumes', []))
-    volumes_from = wrap('--volumes-from=', params.get('volumes_from', []))
-    env = wrap(' -e ',
-               ['"{}={}"'.format(k, v)
-                for k, v in params.get('environment', {}).items()])
+    volumes = wrap('-v ',
+                   params.get('volumes', []) + master.get('volumes', []))
+    volumes_from = wrap(
+        '--volumes-from=',
+        params.get('volumes_from', []) + master.get('volumes_from', []))
+    all_env = params.get('environment', {})
+    all_env.update(master.get('environment', {}))
+    env = wrap(' -e ', ['"{}={}"'.format(k, v) for k, v in all_env.items()])
     working_dir = wrap('-w ', filter(None, [params.get('working_dir')]))
     entrypoint = wrap('--entrypoint=',
                       filter(None, [params.get('entrypoint')]))
@@ -70,8 +73,9 @@ def spawn_children():
     with open('/serfnode.yml') as input:
         yml = yaml.load(input) or {}
         children = yml.get('children') or {}
+        master = yml.get('serfnode') or {}
         for pos, child in enumerate(children):
-            install(pos, child)
+            install(pos, child, master)
 
 
 def spawn_docker_run():

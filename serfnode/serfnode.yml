@@ -1,12 +1,10 @@
 ---
 
 serfnode:
-  PEER: localhost
-  SERF_IP:
-  SERF_PORT:
-  SERVICE_IP:
-  SERVICE_PORT:
-  ROLE:
+#  PEER: localhost
+  role: foo
+  ports:
+    - "8000:8000"
 
 children:
   - my_container:

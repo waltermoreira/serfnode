@@ -40,7 +40,7 @@ def save_me(loc):
 
 def update_children():
     children = json.load(open('/children_by_name.json'))
-    for child in children.items():
+    for child in children.values():
         update_child(child['inspect']['Id'])
 
 

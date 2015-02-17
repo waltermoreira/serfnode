@@ -7,7 +7,6 @@ import struct
 from serf_master import SerfHandler
 from utils import with_payload, truncated_stdout, with_member_info
 import docker_utils
-import utils
 import serf
 import config
 
@@ -37,6 +36,39 @@ def get_info(cid):
 def save_me(loc):
     with open(loc, 'w') as f:
         json.dump(get_info(socket.gethostname()), f)
+
+
+def update_children():
+    children = json.load(open('/children_by_name.json'))
+    for child in children.items():
+        update_child(child['inspect']['Id'])
+
+
+def update_child(cid):
+    etc = read_etc(cid)
+    new = serf.serf_all_hosts()
+    recent = serf.serf_recent_hosts(new)
+    etc.update(recent)
+    write_etc(cid, etc)
+
+
+def read_etc(cid):
+    lines = docker_utils.docker('exec', cid, 'cat', '/etc/hosts').splitlines()
+    etc = [line.strip().split()
+           for line in lines
+           if not line.startswith('#')]
+    return {host: line[0] for line in etc for host in line[1:]}
+
+
+def write_etc(cid, etc):
+    ip_hosts = {}
+    for host, ip in etc.items():
+        ip_hosts.setdefault(ip, []).append(host)
+        content = '\n'.join(
+            ' '.join([ip] + hosts)+'\n' for ip, hosts in ip_hosts.items())
+        docker_utils.docker(
+            'exec', cid, 'bash', '-c',
+            "echo '{}' > /etc/hosts".format(content))
 
 
 class BaseHandler(SerfHandler):
@@ -70,12 +102,8 @@ class BaseHandler(SerfHandler):
             print(json.dumps(NODE_PORTS))
 
     def update(self):
-        etc = utils.read_etc_hosts()
-        new = serf.serf_all_hosts()
-        recent = serf.serf_recent_hosts(new)
-        etc.update(recent)
-        utils.write_etc_hosts(etc)
         update_nodes_info()
+        update_children()
 
     @with_member_info
     def member_join(self, members):

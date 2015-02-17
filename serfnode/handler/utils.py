@@ -84,23 +84,6 @@ def serf_aware_spawn(actor, name, **kwargs):
     return proc
 
 
-def read_etc_hosts():
-    etc = [line.strip().split()
-           for line in open('/etc/hosts').readlines()
-           if not line.startswith('#')]
-    return {host: line[0] for line in etc for host in line[1:]}
-
-
-def write_etc_hosts(etc):
-    shutil.copyfile('/etc/hosts', '/etc/hosts.orig')
-    ip_hosts = {}
-    for host, ip in etc.items():
-        ip_hosts.setdefault(ip, []).append(host)
-    with open('/etc/hosts', 'w') as f:
-        f.writelines(
-            ' '.join([ip] + hosts)+'\n' for ip, hosts in ip_hosts.items())
-
-
 def get_ports():
     """Get the ports mapping for this node."""
 

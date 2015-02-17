@@ -59,7 +59,7 @@ def start_docker(target, cmdline, share_network=True):
 
 
 def install_launcher(target, cmdline,
-                     share_network=True, recycle=False, pos=None):
+                     share_network=False, recycle=False, pos=None):
     print("Will start {} with cmdline: {}".format(target, cmdline))
     if recycle:
         name = target

@@ -69,7 +69,7 @@ def spawn_children():
     print("Using serfnode.yml")
     with open('/serfnode.yml') as input:
         yml = yaml.load(input) or {}
-        children = yml.get('children', {})
+        children = yml.get('children') or {}
         for pos, child in enumerate(children):
             install(pos, child)
 

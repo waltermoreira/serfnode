@@ -64,7 +64,7 @@ def write_etc(cid, etc):
     ip_hosts = {}
     for host, ip in etc.items():
         ip_hosts.setdefault(ip, []).append(host)
-        content = '\n'.join(
+        content = ''.join(
             ' '.join([ip] + hosts)+'\n' for ip, hosts in ip_hosts.items())
         docker_utils.docker(
             'exec', cid, 'bash', '-c',

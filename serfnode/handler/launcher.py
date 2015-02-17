@@ -96,6 +96,7 @@ if __name__ == '__main__':
     while True:
         try:
             json.load(open('/me.json'))
+            break
         except (ValueError, IOError):
             time.sleep(0.1)
             continue

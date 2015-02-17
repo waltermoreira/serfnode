@@ -21,5 +21,5 @@ ip = (os.environ.get('SERF_IP') or yml.get('SERF_IP') or
 bind_port = os.environ.get('SERF_PORT') or yml.get('SERF_PORT') or 7946
 node = os.environ.get('NODE_NAME') or uuid.uuid4().hex
 rpc_port = os.environ.get('RPC_PORT') or 7373
-service = os.environ.get('SERVICE_IP') or yml.get('SERVICE_IP') or ip
+service = os.environ.get('SERVICE_IP') or yml.get('SERVICE_IP')
 service_port = os.environ.get('SERVICE_PORT') or yml.get('SERVICE_PORT') or 0

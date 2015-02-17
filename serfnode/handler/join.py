@@ -11,9 +11,11 @@ address.
 
 import subprocess
 import time
+import os
 
 from utils import get_ports, encode_ports
 import config
+import docker_utils
 
 
 def main():
@@ -44,6 +46,12 @@ def main():
     cmd.extend(['-tag', 'timestamp={}'.format(time.time())])
 
     service = config.service
+    if service is None:
+        while not os.path.exists('/tmp/network'):
+            time.sleep(0.1)
+        c = docker_utils.client.inspect_container(open('/tmp/network').read())
+        service = c['NetworkSettings']['IPAddress']
+
     cmd.extend(['-tag', 'service={}'.format(service)])
 
     service_port = config.service_port

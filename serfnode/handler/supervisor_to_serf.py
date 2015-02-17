@@ -2,6 +2,8 @@
 
 import json
 import sys
+import os
+import time
 
 from serf import serf, serf_event
 
@@ -15,6 +17,9 @@ def write_stderr(s):
     sys.stderr.flush()
 
 def main():
+    while not os.path.exists('/agent_up'):
+        time.sleep(0.1)
+
     while True:
         write_stdout('READY\n') # transition from ACKNOWLEDGED to READY
         line = sys.stdin.readline()  # read header line from stdin

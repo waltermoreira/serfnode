@@ -24,10 +24,13 @@ def handler(name, signum, frame):
 
 
 def launch(name, args, pos=None):
+    net_id = None
     if pos is not None and pos > 0:
         # wait for file /pos_{pos}
         while not os.path.exists('/pos_{}'.format(pos)):
             time.sleep(0.1)
+        # grab cid of a previously started child
+        net_id = open('/tmp/network').read()
     try:
         cid = open('/child_{}'.format(name)).read().strip()
     except IOError:
@@ -44,6 +47,8 @@ def launch(name, args, pos=None):
         pass
     # if start fails, just do a 'run'
     args.insert(0, '--cidfile=/child_{}'.format(name))
+    if net_id is not None:
+        args.insert(0, '--net=container:{}'.format(net_id))
     cid = docker_utils.docker(
         'run', '-d',
         '--volumes-from={}'.format(socket.gethostname()),
@@ -52,6 +57,8 @@ def launch(name, args, pos=None):
         # touch file /pos_{pos+1}
         with open('/pos_{}'.format(pos+1), 'w') as f:
             pass
+    with open('/tmp/network', 'w') as f:
+        f.write(cid)
     return cid
 
 

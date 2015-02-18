@@ -3,6 +3,7 @@ import os
 import socket
 import fcntl
 import struct
+import glob
 
 from serf_master import SerfHandler
 from utils import with_payload, truncated_stdout, with_member_info
@@ -39,9 +40,9 @@ def save_me(loc):
 
 
 def update_children():
-    children = json.load(open('/children_by_name.json'))
-    for child in children.values():
-        update_child(child['inspect']['Id'])
+    for child in glob.glob('/child_app_*'):
+        cid = open(child).read()
+        update_child(cid)
 
 
 def update_child(cid):

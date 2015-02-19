@@ -40,7 +40,7 @@ def save_me(loc):
 
 
 def update_children():
-    for child in glob.glob('/child_app_*'):
+    for child in glob.glob('/child_*'):
         cid = open(child).read()
         update_child(cid)
 

@@ -64,7 +64,8 @@ def install_launcher(target, cmdline,
     if recycle:
         name = target
     else:
-        name = 'app_{}_{}'.format(socket.gethostname(), uuid.uuid4())
+        name = '{}_app_{}_{}'.format(
+            target, socket.gethostname(), uuid.uuid4())
     args = ['--name={}'.format(name)]
     if share_network:
         args.extend([

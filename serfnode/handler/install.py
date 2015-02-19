@@ -66,7 +66,7 @@ def install(pos, conf, master):
                   '{volumes_from} {env} {working_dir} {entrypoint} '
                   '{user} {privileged} {image} {cmd}'
                   .format(**locals()))
-    print("will run {}".format(docker_run))
+    print("Child: docker run {}".format(' '.join(docker_run.split())))
     supervisor.install_launcher(name, docker_run, pos=pos)
 
 

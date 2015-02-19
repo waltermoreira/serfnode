@@ -60,7 +60,6 @@ def start_docker(target, cmdline, share_network=True):
 
 def install_launcher(target, cmdline,
                      share_network=False, recycle=False, pos=None):
-    print("Will start {} with cmdline: {}".format(target, cmdline))
     if recycle:
         name = target
     else:
@@ -81,7 +80,6 @@ def install_launcher(target, cmdline,
 
 
 def install_docker_run(cmdline, name=None):
-    print("Will start docker_run with cmdline: {}".format(cmdline))
     if name is None:
         name = 'app_docker_run'
     cmdline = '--name={} '.format(name) + cmdline

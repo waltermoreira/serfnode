@@ -58,13 +58,12 @@ def start_docker(target, cmdline, share_network=True):
           NAME=name)
 
 
-def install_launcher(target, cmdline,
+def install_launcher(target, cmdline, unique_name=None,
                      share_network=False, recycle=False, pos=None):
     if recycle:
         name = target
     else:
-        name = '{}_app_{}_{}'.format(
-            target, socket.gethostname(), uuid.uuid4())
+        name = unique_name
     args = ['--name={}'.format(name)]
     if share_network:
         args.extend([

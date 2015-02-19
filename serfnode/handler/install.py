@@ -4,6 +4,9 @@ import os
 import supervisor
 import yaml
 import docker_utils
+import socket
+import uuid
+
 import config
 
 
@@ -33,7 +36,7 @@ def wrap(op, values):
     return ' '.join('{}{}'.format(op, v) for v in values)
 
 
-def install(pos, conf, master):
+def install(pos, conf, master, children):
     name = conf.keys()[0]
     params = conf[name]
 
@@ -46,11 +49,17 @@ def install(pos, conf, master):
                    params.get('volumes', []) +
                    master.get('volumes', []) +
                    config.app_volumes)
-    volumes_from = wrap(
-        '--volumes-from=',
-        params.get('volumes_from', []) +
-        master.get('volumes_from', []) +
-        config.app_volumes_from)
+
+    src_volumes = (params.get('volumes_from', []) +
+                   master.get('volumes_from', []) +
+                   config.app_volumes_from)
+
+    def rewrite_volumes(vol):
+        return children.get(vol, vol)
+
+    src_volumes = [rewrite_volumes(v) for v in src_volumes]
+    volumes_from = wrap('--volumes-from=', src_volumes)
+
     all_env = params.get('environment', {})
     all_env.update(master.get('environment', {}))
     env = wrap(' -e ', ['"{}={}"'.format(k, v) for k, v in all_env.items()])
@@ -67,7 +76,8 @@ def install(pos, conf, master):
                   '{user} {privileged} {image} {cmd}'
                   .format(**locals()))
     print("Child: docker run {}".format(' '.join(docker_run.split())))
-    supervisor.install_launcher(name, docker_run, pos=pos)
+    supervisor.install_launcher(name, docker_run,
+                                pos=pos, unique_name=children[name])
 
 
 def spawn_children():
@@ -84,8 +94,13 @@ def spawn_children():
         if not children:
             with open('/tmp/network', 'w'):
                 pass
+        unique_names = {}
+        for child in children:
+            name = child.keys()[0]
+            unique_names[name] = '{}_app_{}_{}'.format(
+                name, socket.gethostname(), uuid.uuid4())
         for pos, child in enumerate(children):
-            install(pos, child, master)
+            install(pos, child, master, unique_names)
 
 
 def spawn_docker_run():

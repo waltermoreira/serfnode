@@ -4,6 +4,7 @@ import os
 import supervisor
 import yaml
 import docker_utils
+import config
 
 
 def collect_app_volumes():
@@ -37,13 +38,19 @@ def install(pos, conf, master):
     params = conf[name]
 
     links = wrap('--link=', params.get('links', []))
-    ports = wrap('-p ', params.get('ports', []) + master.get('ports', []))
+    ports = wrap('-p ', (params.get('ports', []) +
+                         master.get('ports', []) +
+                         config.app_ports))
     expose = wrap('--expose=', params.get('expose', []))
     volumes = wrap('-v ',
-                   params.get('volumes', []) + master.get('volumes', []))
+                   params.get('volumes', []) +
+                   master.get('volumes', []) +
+                   config.app_volumes)
     volumes_from = wrap(
         '--volumes-from=',
-        params.get('volumes_from', []) + master.get('volumes_from', []))
+        params.get('volumes_from', []) +
+        master.get('volumes_from', []) +
+        config.app_volumes_from)
     all_env = params.get('environment', {})
     all_env.update(master.get('environment', {}))
     env = wrap(' -e ', ['"{}={}"'.format(k, v) for k, v in all_env.items()])

@@ -23,3 +23,7 @@ node = os.environ.get('NODE_NAME') or uuid.uuid4().hex
 rpc_port = os.environ.get('RPC_PORT') or 7373
 service = os.environ.get('SERVICE_IP') or yml.get('service_ip')
 service_port = os.environ.get('SERVICE_PORT') or yml.get('service_port') or 0
+
+app_ports = yaml.load(os.environ.get('APP_PORTS', '')) or []
+app_volumes = yaml.load(os.environ.get('APP_VOLUMES', '')) or []
+app_volumes_from = yaml.load(os.environ.get('APP_VOLUMES_FROM', '')) or []

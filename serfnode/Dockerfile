@@ -25,6 +25,7 @@ COPY deploy /deploy
 COPY entry.sh /bin/entry.sh
 COPY out /out
 COPY err /err
+COPY alias.sh /alias
 
 EXPOSE 7946 7946/udp 7373
 

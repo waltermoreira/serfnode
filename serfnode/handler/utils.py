@@ -84,17 +84,18 @@ def serf_aware_spawn(actor, name, **kwargs):
     return proc
 
 
-def get_ports():
-    """Get the ports mapping for this node."""
+def get_ports(cid=None):
+    """Get the ports mapping for the container `cid`."""
 
-    def _get_ports():
-        cinfo = docker_utils.client.inspect_container(socket.gethostname())
+    def _get_ports(cid):
+        cinfo = docker_utils.client.inspect_container(cid)
         for port, host_ports in cinfo['NetworkSettings']['Ports'].items():
             if host_ports is not None:
                 yield port, [host['HostPort'] for host in host_ports]
 
+    cid = cid or socket.gethostname()
     return {
-        'ports': dict(_get_ports()),
+        'ports': dict(_get_ports(cid)),
         'ip': config.ip
     }
 

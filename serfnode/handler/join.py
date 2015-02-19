@@ -61,7 +61,7 @@ def main():
     cmd.extend(['-tag', 'service_port={}'.format(service_port)])
 
     cmd.extend(['-tag', 'ports={}'.format(
-        encode_ports(get_ports()['ports']))])
+        encode_ports(get_ports(cid)['ports']))])
 
     subprocess.check_call(cmd)
 

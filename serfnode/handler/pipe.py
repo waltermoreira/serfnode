@@ -4,6 +4,7 @@ import os
 import select
 import json
 import sys
+import traceback
 
 
 def server(pipe_file, handler):
@@ -37,5 +38,6 @@ def server(pipe_file, handler):
         try:
             handler(obj)
         except:
+            print(traceback.format_exc(), file=sys.stderr)
             print("handler failed", file=sys.stderr)
 

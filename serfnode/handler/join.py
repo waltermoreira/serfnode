@@ -49,8 +49,11 @@ def main():
     if service is None:
         while not os.path.exists('/tmp/network'):
             time.sleep(0.1)
-        c = docker_utils.client.inspect_container(open('/tmp/network').read())
-        service = c['NetworkSettings']['IPAddress']
+        cid = open('/tmp/network').read().strip()
+        if cid:
+            c = docker_utils.client.inspect_container(
+                open('/tmp/network').read())
+            service = c['NetworkSettings']['IPAddress']
 
     cmd.extend(['-tag', 'service={}'.format(service)])
 

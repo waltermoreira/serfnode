@@ -81,6 +81,9 @@ def spawn_children():
         yml = yaml.load(input) or {}
         children = yml.get('children') or {}
         master = yml.get('serfnode') or {}
+        if not children:
+            with open('/tmp/network', 'w'):
+                pass
         for pos, child in enumerate(children):
             install(pos, child, master)
 

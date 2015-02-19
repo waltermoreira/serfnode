@@ -1,32 +1,32 @@
 ---
 
-serfnode:
-#  PEER: localhost
-  role: foo
-  ports:
-    - "8000:8000"
-
-children:
-  - my_container:
-      image: ubuntu
-      command: sleep infinity
-      # links:
-      #   - foo
-      # ports:
-      #   - "3:3"
-      # expose:
-      #   - "9"
-      # volumes:
-      #   - foo:/tmp
-      # volumes_from:
-      #   - bar
-      environment:
-        MY_VAR: 1
-      working_dir: /tmp
-      # entrypoint: bash
-      # user: goo
-      privileged: no
-
-  - other:
-      image: ubuntu
-      command: sleep infinity
+#serfnode:
+##  PEER: localhost
+#  role: foo
+#  ports:
+#    - "8000:8000"
+#
+#children:
+#  - my_container:
+#      image: ubuntu
+#      command: sleep infinity
+#      # links:
+#      #   - foo
+#      # ports:
+#      #   - "3:3"
+#      # expose:
+#      #   - "9"
+#      # volumes:
+#      #   - foo:/tmp
+#      # volumes_from:
+#      #   - bar
+#      environment:
+#        MY_VAR: 1
+#      working_dir: /tmp
+#      # entrypoint: bash
+#      # user: goo
+#      privileged: no
+#
+#  - other:
+#      image: ubuntu
+#      command: sleep infinity

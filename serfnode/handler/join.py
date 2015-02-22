@@ -55,6 +55,8 @@ def main():
             c = docker_utils.client.inspect_container(
                 open('/tmp/network').read())
             service = c['NetworkSettings']['IPAddress']
+        else:
+            service = ip
 
     cmd.extend(['-tag', 'service={}'.format(service)])
 

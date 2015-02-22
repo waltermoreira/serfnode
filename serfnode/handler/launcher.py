@@ -59,14 +59,19 @@ def launch(name, args, pos=None):
             pass
     with open('/tmp/network', 'w') as f:
         f.write(cid)
-    return cid
+    return cid, net_id
 
 
-def inject_child_info(cid):
+def inject_child_info(cid, net_id):
     id = json.load(open('/me.json'))['id']
+    inspect = docker_utils.client.inspect_container(cid)
+    if net_id is not None:
+        # Use network info from the first child from who we share the network
+        net_child = docker_utils.client.inspect_container(net_id)
+        inspect['NetworkSettings'] = net_child['NetworkSettings']
     info = {
         'id': id,
-        'inspect': docker_utils.client.inspect_container(cid)
+        'inspect': inspect
     }
     docker_utils.docker(
         'exec', cid, 'bash', '-c',
@@ -87,7 +92,7 @@ if __name__ == '__main__':
         name = sys.argv[1]
     args = sys.argv[2:]
     signal.signal(signal.SIGINT, functools.partial(handler, name))
-    child = launch(name, args, pos=pos)
+    child, net_child = launch(name, args, pos=pos)
     # write child (cid) to known pipe
     while not os.path.exists('/tmp/children_server'):
         time.sleep(0.1)
@@ -100,5 +105,5 @@ if __name__ == '__main__':
         except (ValueError, IOError):
             time.sleep(0.1)
             continue
-    inject_child_info(child)
+    inject_child_info(child, net_child)
     docker_utils.docker('wait', child)

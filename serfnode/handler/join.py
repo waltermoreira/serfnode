@@ -46,6 +46,7 @@ def main():
     cmd.extend(['-tag', 'timestamp={}'.format(time.time())])
 
     service = config.service
+    cid = None
     if service is None:
         while not os.path.exists('/tmp/network'):
             time.sleep(0.1)

@@ -81,6 +81,10 @@ class BaseHandler(SerfHandler):
         self.setup()
         self.notify()
 
+    @classmethod
+    def init(cls):
+        pass
+
     def setup(self):
         self.update()
 

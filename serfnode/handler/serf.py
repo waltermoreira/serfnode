@@ -41,6 +41,23 @@ def serf_event(name, *args):
     subprocess.check_call(cmd, stdout=sys.stderr)
 
 
+def serf_query(name, args):
+    """
+    :param name: str
+    :param args: dict
+    :return:
+    """
+    rpc_port = config.rpc_port
+    cmd = ['serf', 'query',
+           '-rpc-addr', '127.0.0.1:{}'.format(rpc_port),
+           '-format=json', name,
+           json.dumps(args)]
+    out = json.loads(subprocess.check_output(cmd))
+    for node, response in out['Responses'].items():
+        if response.endswith('SUCCESS'):
+            yield json.loads(response[:-len('SUCCESS')])
+
+
 def _query(name, service):
     rpc_port = config.rpc_port
     cmd = ['serf', 'query',

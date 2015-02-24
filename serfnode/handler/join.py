@@ -12,10 +12,23 @@ address.
 import subprocess
 import time
 import os
+import multiprocessing
 
 from utils import get_ports, encode_ports
 import config
 import docker_utils
+from handler import MyHandler
+
+
+def async_hook():
+    p = multiprocessing.Process(target=hook)
+    p.start()
+
+
+def hook():
+    while not os.path.exists('/agent_up'):
+        time.sleep(0.1)
+    MyHandler.init()
 
 
 def main():
@@ -65,6 +78,8 @@ def main():
 
     cmd.extend(['-tag', 'ports={}'.format(
         encode_ports(get_ports(cid)['ports']))])
+
+    async_hook()
 
     subprocess.check_call(cmd)
 

@@ -26,7 +26,8 @@ def async_hook():
 
 
 def hook():
-    while not os.path.exists('/agent_up'):
+    ready_files = ['/agent_up', '/children_by_name.json']
+    while not all(os.path.exists(f) for f in ready_files):
         time.sleep(0.1)
     MyHandler.init()
 

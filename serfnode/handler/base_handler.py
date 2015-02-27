@@ -86,7 +86,7 @@ class BaseHandler(SerfHandler):
         pass
 
     def setup(self):
-        self.update()
+        pass
 
     def notify(self):
         with open('/agent_up', 'w') as f:

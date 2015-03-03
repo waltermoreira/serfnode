@@ -24,13 +24,10 @@ def handler(name, signum, frame):
 
 
 def launch(name, args, pos=None):
-    net_id = None
     if pos is not None and pos > 0:
         # wait for file /pos_{pos}
         while not os.path.exists('/pos_{}'.format(pos)):
             time.sleep(0.1)
-        # grab cid of a previously started child
-        net_id = open('/tmp/network').read()
     try:
         cid = open('/child_{}'.format(name)).read().strip()
     except IOError:
@@ -47,8 +44,6 @@ def launch(name, args, pos=None):
         pass
     # if start fails, just do a 'run'
     args.insert(0, '--cidfile=/child_{}'.format(name))
-    if net_id is not None:
-        args.insert(0, '--net=container:{}'.format(net_id))
     cid = docker_utils.docker(
         'run', '-d',
         '--volumes-from={}'.format(socket.gethostname()),
@@ -57,18 +52,17 @@ def launch(name, args, pos=None):
         # touch file /pos_{pos+1}
         with open('/pos_{}'.format(pos+1), 'w') as f:
             pass
-    with open('/tmp/network', 'w') as f:
-        f.write(cid)
-    return cid, net_id
+    return cid
 
 
-def inject_child_info(cid, net_id):
+def inject_child_info(cid):
+    net_id = socket.gethostname()
     id = json.load(open('/me.json'))['id']
     inspect = docker_utils.client.inspect_container(cid)
     if net_id is not None:
         # Use network info from the first child from who we share the network
-        net_child = docker_utils.client.inspect_container(net_id)
-        inspect['NetworkSettings'] = net_child['NetworkSettings']
+        net_parent = docker_utils.client.inspect_container(net_id)
+        inspect['NetworkSettings'] = net_parent['NetworkSettings']
     info = {
         'id': id,
         'inspect': inspect
@@ -92,7 +86,7 @@ if __name__ == '__main__':
         name = sys.argv[1]
     args = sys.argv[2:]
     signal.signal(signal.SIGINT, functools.partial(handler, name))
-    child, net_child = launch(name, args, pos=pos)
+    child = launch(name, args, pos=pos)
     # write child (cid) to known pipe
     while not os.path.exists('/tmp/children_server'):
         time.sleep(0.1)
@@ -105,5 +99,5 @@ if __name__ == '__main__':
         except (ValueError, IOError):
             time.sleep(0.1)
             continue
-    inject_child_info(child, net_child)
+    inject_child_info(child)
     docker_utils.docker('wait', child)

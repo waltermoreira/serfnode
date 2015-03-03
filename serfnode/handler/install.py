@@ -77,7 +77,8 @@ def install(pos, conf, master, children):
                   .format(**locals()))
     print("Child: docker run {}".format(' '.join(docker_run.split())))
     supervisor.install_launcher(name, docker_run,
-                                pos=pos, unique_name=children[name])
+                                pos=pos, unique_name=children[name],
+                                share_network=True)
 
 
 def spawn_children():
@@ -91,9 +92,6 @@ def spawn_children():
         yml = yaml.load(input) or {}
         children = yml.get('children') or {}
         master = yml.get('serfnode') or {}
-        if not children:
-            with open('/tmp/network', 'w'):
-                pass
         unique_names = {}
         for child in children:
             name = child.keys()[0]

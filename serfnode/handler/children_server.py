@@ -5,7 +5,7 @@ import time
 import os
 
 import pipe
-from base_handler import get_info
+from join import get_info
 
 
 def handler(obj):

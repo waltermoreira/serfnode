@@ -86,26 +86,14 @@ def main():
     cmd.extend(['-tag', 'rpc={}'.format(rpc_port)])
     cmd.extend(['-tag', 'timestamp={}'.format(time.time())])
 
-    service = config.service
-    cid = None
-    if service is None:
-        while not os.path.exists('/tmp/network'):
-            time.sleep(0.1)
-        cid = open('/tmp/network').read().strip()
-        if cid:
-            c = docker_utils.client.inspect_container(
-                open('/tmp/network').read())
-            service = c['NetworkSettings']['IPAddress']
-        else:
-            service = ip
-
+    service = config.service or ip
     cmd.extend(['-tag', 'service={}'.format(service)])
 
     service_port = config.service_port
     cmd.extend(['-tag', 'service_port={}'.format(service_port)])
 
     cmd.extend(['-tag', 'ports={}'.format(
-        encode_ports(get_ports(cid)['ports']))])
+        encode_ports(get_ports()['ports']))])
 
     async_hook()
     async_save_info()

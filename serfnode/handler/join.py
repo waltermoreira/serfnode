@@ -13,7 +13,10 @@ import subprocess
 import time
 import os
 import multiprocessing
+import json
+import socket
 
+import serf
 from utils import get_ports, encode_ports
 import config
 import docker_utils
@@ -30,6 +33,30 @@ def hook():
     while not all(os.path.exists(f) for f in ready_files):
         time.sleep(0.1)
     MyHandler.init()
+
+
+def get_info(cid):
+    sid = serf.serf_json('info')['agent']['name']
+    inspect = docker_utils.client.inspect_container(cid)
+    return {'id': sid, 'inspect': inspect}
+
+
+def save_me(loc):
+    with open(loc, 'w') as f:
+        json.dump(get_info(socket.gethostname()), f)
+
+
+def save_info():
+    ready_files = ['/agent_up']
+    while not all(os.path.exists(f) for f in ready_files):
+        time.sleep(0.1)
+    save_me('/me.json')
+    save_me('/serfnode/parent.json')
+
+
+def async_save_info():
+    p = multiprocessing.Process(target=save_info)
+    p.start()
 
 
 def main():
@@ -81,6 +108,7 @@ def main():
         encode_ports(get_ports(cid)['ports']))])
 
     async_hook()
+    async_save_info()
 
     subprocess.check_call(cmd)
 

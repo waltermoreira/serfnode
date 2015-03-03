@@ -1,5 +1,4 @@
 import json
-import os
 import socket
 import fcntl
 import struct
@@ -26,17 +25,6 @@ def get_ip_address(ifname):
 
 def update_nodes_info():
     serf.all_nodes_by_role_and_id()
-
-
-def get_info(cid):
-    sid = serf.serf_json('info')['agent']['name']
-    inspect = docker_utils.client.inspect_container(cid)
-    return {'id': sid, 'inspect': inspect}
-
-
-def save_me(loc):
-    with open(loc, 'w') as f:
-        json.dump(get_info(socket.gethostname()), f)
 
 
 def update_children():
@@ -72,14 +60,22 @@ def write_etc(cid, etc):
             "echo '{}' > /etc/hosts".format(content))
 
 
+def notify():
+    with open('/agent_up', 'w') as f:
+        f.write('')
+
+
+def update():
+    update_nodes_info()
+    update_children()
+
+
 class BaseHandler(SerfHandler):
 
     def __init__(self, *args, **kwargs):
         super(BaseHandler, self).__init__(*args, **kwargs)
-        save_me('/me.json')
-        save_me('/serfnode/parent.json')
         self.setup()
-        self.notify()
+        notify()
 
     @classmethod
     def init(cls):
@@ -87,10 +83,6 @@ class BaseHandler(SerfHandler):
 
     def setup(self):
         pass
-
-    def notify(self):
-        with open('/agent_up', 'w') as f:
-            f.write('')
 
     @truncated_stdout
     @with_payload
@@ -106,18 +98,14 @@ class BaseHandler(SerfHandler):
         if my_role == role:
             print(json.dumps(NODE_PORTS))
 
-    def update(self):
-        update_nodes_info()
-        update_children()
-
     @with_member_info
     def member_join(self, members):
-        self.update()
+        update()
 
     @with_member_info
     def member_failed(self, members):
-        self.update()
+        update()
 
     @with_member_info
     def member_leave(self, members):
-        self.update()
+        update()

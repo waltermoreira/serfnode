@@ -60,7 +60,7 @@ def with_member_info(f):
 def member_info(lines):
     for line in lines:
         member = {}
-        parts = line.split()
+        parts = line.strip().split('\t')
         member['node'] = parts[0]
         member['ip'] = parts[1]
         member['role'] = parts[2]

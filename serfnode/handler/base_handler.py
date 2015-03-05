@@ -6,7 +6,6 @@ import glob
 
 from serf_master import SerfHandler
 from utils import with_payload, truncated_stdout, with_member_info
-import docker_utils
 import serf
 import config
 
@@ -27,37 +26,31 @@ def update_nodes_info():
     serf.all_nodes_by_role_and_id()
 
 
-def update_children():
-    for child in glob.glob('/child_*'):
-        cid = open(child).read()
-        update_child(cid)
-
-
-def update_child(cid):
-    etc = read_etc(cid)
+def update_etc():
+    etc = read_etc()
     new = serf.serf_all_hosts()
     recent = serf.serf_recent_hosts(new)
     etc.update(recent)
-    write_etc(cid, etc)
+    write_etc(etc)
 
 
-def read_etc(cid):
-    lines = docker_utils.docker('exec', cid, 'cat', '/etc/hosts').splitlines()
-    etc = [line.strip().split()
-           for line in lines
-           if not line.startswith('#')]
+def read_etc():
+    with open('/etc/hosts') as f:
+        lines = f.readlines()
+        etc = [line.strip().split()
+               for line in lines
+               if not line.startswith('#')]
     return {host: line[0] for line in etc for host in line[1:]}
 
 
-def write_etc(cid, etc):
+def write_etc(etc):
     ip_hosts = {}
     for host, ip in etc.items():
         ip_hosts.setdefault(ip, []).append(host)
         content = ''.join(
             ' '.join([ip] + hosts)+'\n' for ip, hosts in ip_hosts.items())
-        docker_utils.docker(
-            'exec', cid, 'bash', '-c',
-            "echo '{}' > /etc/hosts".format(content))
+        with open('/etc/hosts', 'w') as f:
+            f.write(content)
 
 
 def notify():
@@ -67,7 +60,7 @@ def notify():
 
 def update():
     update_nodes_info()
-    update_children()
+    update_etc()
 
 
 class BaseHandler(SerfHandler):

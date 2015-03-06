@@ -23,7 +23,7 @@ class atomic_write(object):
         """
         :rtype: File
         """
-        _, self.temp = mkstemp(dir=os.getcwd())
+        _, self.temp = mkstemp(dir=os.path.dirname(self.filepath))
         self.f = open(self.temp, 'w')
         return self.f
 

@@ -10,6 +10,7 @@ import sys
 import time
 
 import docker_utils
+from file_utils import wait_for_files, atomic_write
 import serf
 
 
@@ -26,8 +27,7 @@ def handler(name, signum, frame):
 def launch(name, args, pos=None):
     if pos is not None and pos > 0:
         # wait for file /pos_{pos}
-        while not os.path.exists('/pos_{}'.format(pos)):
-            time.sleep(0.1)
+        wait_for_files('/pos_{}'.format(pos))
     try:
         cid = open('/child_{}'.format(name)).read().strip()
     except IOError:
@@ -50,8 +50,8 @@ def launch(name, args, pos=None):
         *args)
     if pos is not None:
         # touch file /pos_{pos+1}
-        with open('/pos_{}'.format(pos+1), 'w') as f:
-            pass
+        with atomic_write('/pos_{}'.format(pos+1)) as f:
+            f.write(str(pos+1))
     return cid
 
 
@@ -88,16 +88,9 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, functools.partial(handler, name))
     child = launch(name, args, pos=pos)
     # write child (cid) to known pipe
-    while not os.path.exists('/tmp/children_server'):
-        time.sleep(0.1)
-    with open('/tmp/children_server', 'w') as f:
+    wait_for_files('/tmp/children_server')
+    with atomic_write('/tmp/children_server') as f:
         f.write(json.dumps(child) + '\n')
-    while True:
-        try:
-            json.load(open('/me.json'))
-            break
-        except (ValueError, IOError):
-            time.sleep(0.1)
-            continue
+    wait_for_files('/me.json')
     inject_child_info(child)
     docker_utils.docker('wait', child)

@@ -4,6 +4,7 @@ import sys
 import os
 from itertools import tee, groupby
 
+from file_utils import atomic_write
 import utils
 import config
 
@@ -125,9 +126,9 @@ def all_nodes_by_role_and_id():
         sorted(by_roles, key=lambda o: o['role']),
         key=lambda o: o['role'])}
     for loc in ['/', '/serfnode']:
-        with open(os.path.join(loc, 'serfnodes_by_id.json'), 'w') as f:
+        with atomic_write(os.path.join(loc, 'serfnodes_by_id.json')) as f:
             json.dump(all_by_id, f)
-        with open(os.path.join(loc, 'serfnodes_by_role.json'), 'w') as f:
+        with atomic_write(os.path.join(loc, 'serfnodes_by_role.json')) as f:
             json.dump(all_by_role, f)
 
 

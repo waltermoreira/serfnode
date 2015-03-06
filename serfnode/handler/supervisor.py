@@ -6,6 +6,9 @@ import uuid
 import docker_utils
 import docker
 import jinja2
+
+from file_utils import atomic_write
+
 env = jinja2.Environment(loader=jinja2.FileSystemLoader('/programs'))
 
 
@@ -24,8 +27,8 @@ def supervisor_install(block, **kwargs):
         'DOCKER_SOCKET': docker_utils.DOCKER_SOCKET,
         'DOCKER_RUN': docker_utils.DOCKER_RUN})
     conf = template.render(kwargs)
-    with open(os.path.join(
-            '/etc/supervisor/conf.d', conf_filename), 'w') as f:
+    with atomic_write(os.path.join(
+            '/etc/supervisor/conf.d', conf_filename)) as f:
         f.write(conf)
 
 

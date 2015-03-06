@@ -5,6 +5,7 @@ import struct
 import glob
 
 from serf_master import SerfHandler
+from file_utils import atomic_write
 from utils import with_payload, truncated_stdout, with_member_info
 import serf
 import config
@@ -54,8 +55,8 @@ def write_etc(etc):
 
 
 def notify():
-    with open('/agent_up', 'w') as f:
-        f.write('')
+    with atomic_write('/agent_up') as f:
+        f.write('serf up')
 
 
 def update():

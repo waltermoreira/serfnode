@@ -21,6 +21,7 @@ from utils import get_ports, encode_ports
 import config
 import docker_utils
 from handler import MyHandler
+from file_utils import wait_for_files, atomic_write
 
 
 def async_hook():
@@ -29,9 +30,7 @@ def async_hook():
 
 
 def hook():
-    ready_files = ['/agent_up', '/children_by_name.json']
-    while not all(os.path.exists(f) for f in ready_files):
-        time.sleep(0.1)
+    wait_for_files('/agent_up', '/children_by_name.json')
     MyHandler.init()
 
 
@@ -42,14 +41,12 @@ def get_info(cid):
 
 
 def save_me(loc):
-    with open(loc, 'w') as f:
+    with atomic_write(loc) as f:
         json.dump(get_info(socket.gethostname()), f)
 
 
 def save_info():
-    ready_files = ['/agent_up']
-    while not all(os.path.exists(f) for f in ready_files):
-        time.sleep(0.1)
+    wait_for_files('/agent_up')
     save_me('/me.json')
     save_me('/serfnode/parent.json')
 

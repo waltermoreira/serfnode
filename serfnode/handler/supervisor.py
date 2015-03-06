@@ -4,7 +4,6 @@ import subprocess
 import uuid
 
 import docker_utils
-import docker
 import jinja2
 
 from file_utils import atomic_write

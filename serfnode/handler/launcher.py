@@ -60,7 +60,6 @@ def inject_child_info(cid):
     id = json.load(open('/me.json'))['id']
     inspect = docker_utils.client.inspect_container(cid)
     if net_id is not None:
-        # Use network info from the first child from who we share the network
         net_parent = docker_utils.client.inspect_container(net_id)
         inspect['NetworkSettings'] = net_parent['NetworkSettings']
     info = {

@@ -8,7 +8,7 @@ import socket
 import pipe
 from join import get_info
 import docker_utils
-from file_utils import wait_for_file, atomic_write
+from file_utils import wait_for_files, atomic_write
 
 
 def handler(obj):
@@ -16,7 +16,7 @@ def handler(obj):
         old = json.load(open('/children_by_name.json'))
     except IOError:
         old = {}
-    wait_for_file('/agent_up')
+    wait_for_files('/agent_up')
     new = get_info(obj)
     parent = docker_utils.client.inspect_container(socket.gethostname())
     new['inspect']['NetworkSettings'] = parent['NetworkSettings']

@@ -86,9 +86,11 @@ if __name__ == '__main__':
     args = sys.argv[2:]
     signal.signal(signal.SIGINT, functools.partial(handler, name))
     child = launch(name, args, pos=pos)
-    # write child (cid) to known pipe
+    # wait for children server to start
     wait_for_files('/tmp/children_server')
-    with atomic_write('/tmp/children_server') as f:
+    # write child (cid) to known pipe
+    # no race conditions here because /tmp/children_server is a pipe
+    with open('/tmp/children_server', 'w') as f:
         f.write(json.dumps(child) + '\n')
     wait_for_files('/me.json')
     inject_child_info(child)

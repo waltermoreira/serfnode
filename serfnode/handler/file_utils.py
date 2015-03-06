@@ -33,8 +33,8 @@ class atomic_write(object):
             os.rename(self.temp, self.filepath)
 
 
-def wait_for_file(filepath, sleep_interval=0.1):
-    """Wait for the existence of a file.
+def wait_for_files(*filepath, sleep_interval=0.1):
+    """Wait for the existence of files.
 
     Warning: use ``atomic_write`` to write the file, since this function
     doesn't check that the file is complete.
@@ -43,5 +43,5 @@ def wait_for_file(filepath, sleep_interval=0.1):
     :type sleep_interval: float
     :rtype: None
     """
-    while not os.path.exists(filepath):
+    while not all(os.path.exists(f) for f in filepath):
         time.sleep(sleep_interval)

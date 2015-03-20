@@ -26,7 +26,7 @@ schema:
 
      {
        "id": "<node id>",
-       "inspect": {<output of docker inspect>}
+       "inspect": {"<output of docker inspect>"}
      }
 
 - *Node info*: information about a Serfnode as a member of the
@@ -37,7 +37,7 @@ schema:
      {
        "id": "<node id>",
        "role": "<role of member>",
-       "ports": {<dict of port mappings>},
+       "ports": {"<dict of port mappings>"},
        "serf_ip": "<ip of serf agent>",
        "serf_port": "<port of serf agent>",
        "service_ip": "<ip of service>",
@@ -94,7 +94,7 @@ The format for the message is a JSON object with the form:
 
 .. code-block:: json
 
-   ["<event_name>", {<payload>}]
+   ["<event_name>", {"<payload>"}]
 
 The *payload* is an arbitrary JSON object that gets passed as argument
 to the handler with name ``event_name`` in every member.

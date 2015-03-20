@@ -117,7 +117,6 @@ def spawn_py():
         import serfnode
     except ImportError:
         return
-    print("Using serfnode.py")
     serfnode.spawn(all_volumes())
 
 

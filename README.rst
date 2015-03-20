@@ -8,142 +8,117 @@ Add serf powers to your containers.
 Quickstart
 ==========
 
-*Dependencies*: ``docker`` and ``fig``.
-
-- Clone this repo and build the base image for the serfnodes:
-
-  .. code-block:: bash
-
-     $ git clone https://github.com/waltermoreira/serfnode.git
-     $ cd serfnode/serfnode
-     $ make
-
-  This will generate an image with name ``serfnode``.
-
-- Go to the ``example`` directory to see an example of use.  See
-  `Structure`_ to read about its components.
-
-  Build it and test it with:
-
-  .. code-block:: bash
-
-     $ cd ../example
-     $ make
-     # Launch a node with role "exampleA"
-     $ ROLE=exampleA fig -p exampleA up
-
-  (the ``-p`` parameter is only to overwrite the default project name
-  and to avoid collision when starting another node from the same
-  directory.)
-
-- We can test another nodes joining by starting the same container
-  with a different role.
-
-  First we get the contact information for the node we just started:
-
-  .. code-block:: bash
-
-     $ docker exec exampleA_example_1 cat /node_info
-     {"node": "13024227bdce4a3682c482ab0cbfd89e", "bind_port": 7946,
-     "advertise": "172.17.0.111", "rpc_port": 7373}
-
-  We start a new node with:
-
-  .. code-block:: bash
-
-     $ ROLE=exampleB CONTACT=172.17.0.111:7946 fig -p exampleB up
-
-  We now can check that the nodes are joined:
-
-  .. code-block:: bash
-
-     $ docker exec -it exampleA_example_1 bash
-     root@b87605caaadd:/# serf members
-     0b2c3818c9f94fb692a839c1b92de154  172.17.0.112:7946  alive  bind=7946,rpc=7373,role=exampleB,adv=172.17.0.112
-     13024227bdce4a3682c482ab0cbfd89e  172.17.0.111:7946  alive  role=exampleA,adv=172.17.0.111,bind=7946,rpc=7373
-
-  The ``supervisor`` events received by serf can be seen in
-  ``/var/log/supervisor/serfnode-*``.
-
-  The events can also be triggered with:
-
-  .. code-block:: bash
-
-     root@b87605caaadd:/# serf query where '{"role":"exampleB"}'
-     Query 'where' dispatched
-     Ack from '13024227bdce4a3682c482ab0cbfd89e'
-     Ack from '0b2c3818c9f94fb692a839c1b92de154'
-     Response from '0b2c3818c9f94fb692a839c1b92de154': {"ip": "172.17.0.112", "advertise": "172.17.0.112", "rpc": "7373", "bind": "7946"}
-
-     SUCCESS
-     Total Acks: 2
-     Total Responses: 1
-     root@b87605caaadd:/#
-
-  The ``where`` event was answered only by the matching role node.  By
-  default, all the nodes respond the events, for example:
-
-  .. code-block:: bash
-
-     root@b87605caaadd:/# serf query hello '{"who":"Walter"}'
-     Query 'hello' dispatched
-     Ack from '13024227bdce4a3682c482ab0cbfd89e'
-     Ack from '0b2c3818c9f94fb692a839c1b92de154'
-     Response from '0b2c3818c9f94fb692a839c1b92de154': Hello there, Walter!
-
-     SUCCESS
-     Response from '13024227bdce4a3682c482ab0cbfd89e': Hello there, Walter!
-
-     SUCCESS
-     Total Acks: 2
-     Total Responses: 2
-     root@b87605caaadd:/#
+(Description of a simple example coming soon.)
 
 
+File System API
+===============
 
-Structure
-=========
+Serfnode keeps the information of the cluster in every member. It uses
+a defined set of files in JSON format, both in the parent and in the
+children.  There are two types of JSON objects with the following
+schema:
 
-A ``serfnode`` powered container inherits from the ``serfnode`` image
-and adds extra handlers and actors.
+- *Container info*: full information about a container and its id in
+  the cluster:
 
-To write your own handlers, create the file ``handler/my_handler.py``
-with a class inheriting from ``BaseHandler`` (see the example in the
-``example/handler`` directory).
+  .. code-block:: json
 
-There are three kind of events:
+     {
+       "id": "<node id>",
+       "inspect": {<output of docker inspect>}
+     }
 
-- *supervisor events*: any change of state of processes in supervisor
-  get broadcasted to the cluster via the ``supervisor`` event.  The
-  payload includes information on the process, node, and change of
-  state.
+- *Node info*: information about a Serfnode as a member of the
+  cluster:
 
-- *custom events*: arbitrary events defined by the user with arbitrary
-  payload.  They are triggered by ``serf event`` or ``serf query``.
+  .. code-block:: json
 
-- *members joining/leaving/failing*: see ``serf`` for documentation.
+     {
+       "id": "<node id>",
+       "role": "<role of member>",
+       "ports": {<dict of port mappings>},
+       "serf_ip": "<ip of serf agent>",
+       "serf_port": "<port of serf agent>",
+       "service_ip": "<ip of service>",
+       "service_port": "<port of service>",
+       "timestamp": "<unix timestamp of last member update>"
+     }
 
-Any serfnode also respond to two events: ``where`` and
-``where_actor``, with information about the node ip and the actors
-currently running in that node.
+
+Parent files
+------------
+
+The parent container has access to these files:
+
+- ``/me.json`` (type *Container info*): information about itself as a
+  container.
+
+- ``/children_by_name.json`` (type dict of *Container info*):
+  information about the children as containers.  The keys are the
+  container names of the children.
+
+- ``/serfnodes_by_id.json`` (type dict of *Node info*): information
+  about the cluster.  The keys are the node id of the members.
+
+- ``/serfnodes_by_role.json`` (type dict of list of *Node info*):
+  information about the cluster classified by roles.  The keys are
+  role names.  The values are lists of nodes having a given role.
 
 
-Actors
-======
+Children files
+--------------
 
-Actors can be defined in the file ``handler/actors.py`` (see example
-in the ``example/handler`` directory), inheriting from
-``ProcessActor`` or ``ThreadedActor``.
+Each child has access to these files:
 
-Schedule actors to start at startup time by adding them to
-supervisor.  The ``ExampleActor`` in ``example/handler/actors.py``
-gets scheduled with the following file added to
-``/etc/supervisor/conf.d/``:
+- ``/me.json`` (type *Container info*): information about itself as a
+  container.
 
-.. code-block::
+- ``/serfnode/parent.json`` (type *Container info*): information about
+  its parent as a container.
 
-   # file: example.conf
-   [program:example]
-   command=/handler/start_actor.py ExampleActor
-   autostart=true
-   autorestart=true
+- ``/serfnode/serfnodes_by_{id,role}.json``: same as the files in the
+  parent.
+
+
+Event server
+------------
+
+Each child contains a file with name ``/serfnode/parent``.  The child
+can write to this file for sending events to the cluster.  The file is
+a named FIFO pipe, with the other end connected to the parent
+container.  The parent reads from the pipe and uses the ``serf`` agent
+to raise the event in the cluster.
+
+The format for the message is a JSON object with the form:
+
+.. code-block:: json
+
+   ["<event_name>", {<payload>}]
+
+The *payload* is an arbitrary JSON object that gets passed as argument
+to the handler with name ``event_name`` in every member.
+
+
+/etc/hosts
+----------
+
+Serfnode updates the ``/etc/hosts`` file of the parent and the
+children to contain lines with the form::
+
+    <role> <service ip>
+
+When there are more than one member with the same role, Serfnode picks
+the oldest one.
+
+
+Building from source
+====================
+
+To build from source, clone this repository and build with Docker:
+
+.. code-block:: bash
+
+   $ git clone https://github.com/waltermoreira/serfnode.git
+   $ cd serfnode/serfnode
+   $ docker build -t adama/serfnode .

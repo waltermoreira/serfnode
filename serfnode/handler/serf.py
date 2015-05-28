@@ -135,7 +135,7 @@ def all_nodes_by_role_and_id():
 def serf_recent_hosts(all_hosts):
     hosts = {}
     for role, info in all_hosts.items():
-        ip = max(info, key=lambda it: it['timestamp'])['ip']
+        ip = min(info, key=lambda it: it['timestamp'])['ip']
         hosts[role] = ip
     return hosts
 
